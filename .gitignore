@@ -4,3 +4,8 @@ site/
 __pycache__/
 # gerado por scripts/build_playground.sh docs/playground
 docs/playground/
+
+# deploy (segredos e estado local do terraform)
+deploy/terraform/terraform.tfvars
+deploy/terraform/.terraform/
+deploy/terraform/tfplan

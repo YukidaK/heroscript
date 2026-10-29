@@ -1,0 +1,96 @@
+# Testes, build do site (docs MkDocs + playground) e deploy no Portainer, exposto
+# por Cloudflare Tunnel em https://heroscript.viniciussc.com (ver deploy/).
+#
+# Os segredos ficam SÓ no GitHub Environment "production" (ver
+# deploy/set-github-secrets.sh). Os jobs build e validate não usam environment
+# nem secret, então rodam em qualquer PR; só o apply, na main, recebe as credenciais.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# O state no MinIO não tem lock: dois applies juntos corrompem o state.
+concurrency:
+  group: deploy-${{ github.event_name == 'pull_request' && github.ref || 'prod' }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - uses: astral-sh/setup-uv@v6
+
+      - name: Testes, playground e documentação
+        run: scripts/build_site.sh
+        env:
+          NO_MKDOCS_2_WARNING: "1"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: site
+          retention-days: 7
+
+  validate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: deploy/terraform
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.12"
+      - run: terraform fmt -check -diff
+      - run: terraform init -backend=false -input=false
+      - run: terraform validate
+
+  apply:
+    needs: [build, validate]
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://heroscript.viniciussc.com
+    defaults:
+      run:
+        working-directory: deploy/terraform
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.MINIO_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.MINIO_SECRET_ACCESS_KEY }}
+      TF_VAR_portainer_endpoint: ${{ secrets.PORTAINER_ENDPOINT }}
+      TF_VAR_portainer_user: ${{ secrets.PORTAINER_USER }}
+      TF_VAR_portainer_password: ${{ secrets.PORTAINER_PASSWORD }}
+      TF_VAR_cloudflare_api_key: ${{ secrets.CLOUDFLARE_API_KEY }}
+      TF_VAR_cloudflare_email: ${{ secrets.CLOUDFLARE_EMAIL }}
+      TF_VAR_cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      TF_VAR_cloudflare_zone_id: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+      TF_IN_AUTOMATION: "true"
+    steps:
+      - uses: actions/checkout@v4
+      # o site/ gerado no job build; o docker.tf faz hash dele para saber se rebuilda a imagem
+      - uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: site
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.12"
+          # o wrapper imprime stdout/stderr de novo; sem ele o log fica limpo
+          terraform_wrapper: false
+      - run: terraform init -backend-config=backend.hcl -input=false
+      - run: terraform plan -out=tfplan -input=false
+      - run: terraform apply -auto-approve -input=false tfplan

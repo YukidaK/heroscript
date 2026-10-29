@@ -1,0 +1,26 @@
+services:
+  heroscript:
+    image: heroscript:latest
+    container_name: heroscript
+    restart: unless-stopped
+    environment:
+      # nao e lido por nada: muda a config do container quando o site muda, pra
+      # o compose recriar em vez de manter a imagem antiga rodando
+      BUILD_HASH: ${BUILD_HASH}
+    networks:
+      - heroscript-network
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: heroscript-cloudflared
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run --token ${TUNNEL_TOKEN}
+    depends_on:
+      - heroscript
+    networks:
+      - heroscript-network
+
+# Sem `ports:` de proposito — a unica entrada e o tunel.
+networks:
+  heroscript-network:
+    driver: bridge

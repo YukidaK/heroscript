@@ -31,8 +31,8 @@ battle {
 }
 ```
 
-- 📚 **Documentação:** https://yukidak.github.io/heroscript/
-- ▶️ **Playground (roda no navegador):** https://yukidak.github.io/heroscript/playground/
+- 📚 **Documentação:** https://heroscript.viniciussc.com/
+- ▶️ **Playground (roda no navegador):** https://heroscript.viniciussc.com/playground/
 
 > O passo a passo de **como a linguagem foi construída** (gramática, lexer, parser, runtime, geração de código,
 > testes e como estendê-la) está em **[PROMPT.md](PROMPT.md)**, que também serve de prompt para uma IA recriar o projeto.
@@ -115,10 +115,12 @@ python3 scripts/serve.py site 8000    # http://localhost:8000/playground/
 
 (`scripts/serve.py` suporta *Range requests*, exigidas pelo CheerpJ; `python -m http.server` não serve.)
 
-### 7. Publicação no GitHub Pages
+### 7. Publicação (Portainer + Cloudflare Tunnel)
 
-O workflow `.github/workflows/pages.yml` roda os testes, monta o playground e publica o site a cada push na `main`.
-Uma única configuração é necessária no GitHub: **Settings → Pages → Source: GitHub Actions**.
+O workflow `.github/workflows/deploy.yml` roda os testes, monta o site (docs + playground) e, a cada push na
+`main`, faz `terraform apply` em `deploy/terraform/`: builda uma imagem nginx no host do Portainer, sobe a stack
+com um sidecar `cloudflared` e aponta `heroscript.viniciussc.com` para o tunnel. Os segredos ficam só no
+GitHub Environment `production`. Detalhes e setup em [`deploy/README.md`](deploy/README.md).
 
 ---
 
@@ -212,7 +214,8 @@ docs/, mkdocs.yml          documentação MkDocs
 pyproject.toml, uv.lock    dependências da documentação (uv)
 playground/                página do playground web (HTML/CSS/JS)
 scripts/                   build_playground.sh, build_site.sh, serve.py
-.github/workflows/         publicação no GitHub Pages
+.github/workflows/         testes, build do site e deploy
+deploy/                    imagem nginx, stack do Portainer e terraform
 build.sh                   compila o projeto para build/classes
 heroscript                 linha de comando
 PROMPT.md                  tutorial completo de como construir a linguagem

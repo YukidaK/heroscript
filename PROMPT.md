@@ -282,7 +282,8 @@ mostrada é sempre a real.
    sempre. Como a primeira compilação leva cerca de 40 s, a página aquece o compilador ao abrir.
 
 **Publicação**: `scripts/build_site.sh` (testes → playground → `mkdocs build --strict`) e o workflow
-`.github/workflows/pages.yml` publicam tudo no GitHub Pages.
+`.github/workflows/deploy.yml` publicam tudo: imagem nginx no Portainer, exposta por Cloudflare Tunnel
+(`deploy/terraform/`). O servidor precisa aceitar *Range requests* (o nginx aceita).
 
 ---
 
@@ -318,4 +319,4 @@ mostrada é sempre a real.
 > `HeroSyntaxError em arquivo:linha:coluna — mensagem`. Inclua exemplos (`iron`, `squad`, `secret`, `errors`),
 > scripts `build.sh`, `heroscript` e `tests/run_tests.sh` comparando saídas esperadas. Crie também a documentação
 > MkDocs Material gerenciada com uv (exemplos incluídos via `pymdownx.snippets`) e um playground web estático que
-> roda o mesmo compilador no navegador com CheerpJ (JVM em WebAssembly) + ECJ, publicado no GitHub Pages.
+> roda o mesmo compilador no navegador com CheerpJ (JVM em WebAssembly) + ECJ, publicado como site estático (nginx).
