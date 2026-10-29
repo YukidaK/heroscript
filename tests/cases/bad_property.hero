@@ -1,0 +1,10 @@
+// Erro semântico: 'dmg' não é uma propriedade de power.
+hero Typo {
+    power Kick {
+        dmg = 10;
+    }
+}
+
+battle {
+    summon Typo as t;
+}

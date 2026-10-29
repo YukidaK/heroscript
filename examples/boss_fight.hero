@@ -1,0 +1,97 @@
+// Luta contra chefe: o vilão também tem missões, gadgets e uma forma de fúria quando perde metade da vida.
+
+villain DragonLord {
+    String name = "Dragon Lord";
+    int health = 400;
+    int energy = 150;
+    boolean enraged = false;
+
+    gadget ScaleArmor {
+        defense = 30;
+        uses = 2;
+    }
+
+    power FireBreath {
+        cost = 30;
+        damage = 60;
+    }
+
+    power TailSwipe {
+        cost = 15;
+        damage = 30;
+    }
+
+    form Enraged {
+        duration = 3;
+        uses = 1;
+        damage *= 2;
+    }
+
+    mission Act(Fighter target) {
+        if (!enraged && health < maxHealth() / 2) {
+            enraged = true;
+            transform Enraged;
+            shield(ScaleArmor);
+        }
+        if (energy >= 30) {
+            unleash FireBreath on target;
+        } else if (energy >= 15) {
+            unleash TailSwipe on target;
+        } else {
+            recharge(60);
+        }
+    }
+}
+
+hero Paladin {
+    String name = "Paladin";
+    int health = 260;
+    int energy = 120;
+
+    gadget HolyShield {
+        defense = 40;
+        uses = 3;
+    }
+
+    power Smite {
+        cost = 20;
+        damage = 70;
+        cooldown = 1;
+    }
+
+    power Strike {
+        cost = 10;
+        damage = 35;
+    }
+
+    mission Fight(Fighter boss) {
+        if (energy < 20) {
+            recharge(40);
+        }
+        try {
+            unleash Smite on boss;
+        } catch (HeroError e) {
+            unleash Strike on boss;
+        }
+        try {
+            shield(HolyShield);
+        } catch (HeroError e) {
+            announce name + " está sem escudo!";
+        }
+    }
+}
+
+battle {
+    summon Paladin as paladin;
+    summon DragonLord as dragon;
+
+    for (int round = 1; round <= 12 && !dragon.isDefeated() && !paladin.isDefeated(); round++) {
+        announce "--- Rodada " + round + " ---";
+        paladin.Fight(dragon);
+        if (!dragon.isDefeated()) {
+            dragon.Act(paladin);
+        }
+    }
+    announce paladin.status();
+    announce dragon.status();
+}

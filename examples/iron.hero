@@ -1,0 +1,72 @@
+// Exemplo básico: herói com gadget, poder, forma e missão contra um vilão.
+
+hero IronGuardian {
+
+    String name = "Iron Guardian";
+    int energy = 100;
+    int health = 150;
+
+    gadget Armor {
+        defense = 40;
+        uses = 2;
+    }
+
+    power RepulsorBlast {
+        cost = 25;
+        damage = 60;
+    }
+
+    power UniBeam {
+        cost = 40;
+        damage = 90;
+        cooldown = 2;
+    }
+
+    form OverdriveSuit {
+        duration = 2;
+        damage *= 2;
+        defense += 20;
+    }
+
+    mission SaveCity(Fighter target) {
+        unleash RepulsorBlast on target;
+
+        if (energy < 80) {
+            recharge(50);
+        }
+
+        shield(Armor);
+        transform OverdriveSuit;
+        unleash UniBeam on target;
+        announce status();
+    }
+}
+
+villain Crusher {
+    String name = "Crusher";
+    int health = 400;
+
+    power GroundSlam {
+        cost = 30;
+        damage = 70;
+    }
+}
+
+battle {
+    summon IronGuardian as tony;
+    summon Crusher as crusher;
+
+    tony.SaveCity(crusher);
+
+    unleash crusher.GroundSlam on tony;     // a armadura ainda está ativa
+    unleash tony.RepulsorBlast on crusher;  // ainda em OverdriveSuit: dano dobrado; depois a forma expira
+
+    evolve tony.RepulsorBlast by 15;
+    for (int i = 0; i < 2 && !crusher.isDefeated(); i++) {
+        tony.recharge(30);
+        unleash tony.RepulsorBlast on crusher;
+    }
+
+    announce tony.status();
+    announce crusher.status();
+}

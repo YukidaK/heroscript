@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Atalho para a linha de comando: ./heroscript run|build|check|tokens arquivo.hero
+set -euo pipefail
+HOME_DIR="$(cd "$(dirname "$0")" && pwd)"
+
+if [ ! -d "$HOME_DIR/build/classes/heroscript" ]; then
+    "$HOME_DIR/build.sh" >&2
+fi
+
+exec java -Dheroscript.home="$HOME_DIR" -cp "$HOME_DIR/build/classes" heroscript.compiler.Main "$@"

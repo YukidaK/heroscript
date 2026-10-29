@@ -1,0 +1,2 @@
+HeroSyntaxError em bad_property.hero:4:9 — propriedade desconhecida 'dmg' em power Kick (esperado: cooldown, cost, damage)
+[exit 1]

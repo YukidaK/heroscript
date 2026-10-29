@@ -1,0 +1,21 @@
+[unleash] Shifter usa Claw em Hunter (-10 EN, energia 70)
+[hit] Hunter sofre 20 de dano → HP 280
+[transform] Shifter assume a forma Beast por 2 ação(ões) → Shifter [HP 100/100 | EN 70/80 | forma Beast]
+[unleash] Hunter usa Spear em Shifter (-10 EN, energia 90)
+[hit] Shifter sofre 30 de dano (10 bloqueado) → HP 70
+[unleash] Shifter usa Claw em Hunter (-10 EN, energia 60)
+[hit] Hunter sofre 60 de dano → HP 220
+[unleash] Shifter usa Claw em Hunter (-10 EN, energia 50)
+[hit] Hunter sofre 60 de dano → HP 160
+[transform] a forma Beast de Shifter expirou
+[revert] Shifter deixa a forma Beast
+[transform] Shifter assume a forma Titan → Shifter [HP 170/100 | EN 50/80 | forma Titan]
+[unleash] Shifter usa Claw em Hunter (-5 EN, energia 45)
+[hit] Hunter sofre 20 de dano → HP 140
+>> Shifter [HP 170/100 | EN 45/80 | forma Titan]
+[revert] Shifter deixa a forma Titan
+>> Shifter [HP 100/100 | EN 45/80 | forma normal]
+[transform] Shifter assume a forma Beast por 2 ação(ões) → Shifter [HP 100/100 | EN 45/80 | forma Beast]
+[revert] Shifter deixa a forma Beast
+>> HeroError: TransformationExpired — a forma Beast de Shifter já foi esgotada
+[exit 0]

@@ -1,0 +1,11 @@
+[project]
+name = "heroscript-docs"
+version = "1.0.0"
+description = "Documentação e playground da HeroScript"
+requires-python = ">=3.10"
+dependencies = [
+    "mkdocs-material>=9.7.7",
+]
+
+[tool.uv]
+package = false

@@ -1,0 +1,46 @@
+>> --- Rodada 1 ---
+[mission] Paladin inicia a missão Fight
+[unleash] Paladin usa Smite em Dragon Lord (-20 EN, energia 100)
+[hit] Dragon Lord sofre 70 de dano → HP 330
+[shield] Paladin ativa HolyShield (defesa 40, 2 uso(s) restante(s))
+[mission] Dragon Lord inicia a missão Act
+[unleash] Dragon Lord usa FireBreath em Paladin (-30 EN, energia 120)
+[hit] Paladin sofre 20 de dano (40 bloqueado) → HP 240
+>> --- Rodada 2 ---
+[mission] Paladin inicia a missão Fight
+[unleash] Paladin usa Strike em Dragon Lord (-10 EN, energia 90)
+[hit] Dragon Lord sofre 35 de dano → HP 295
+[shield] Paladin ativa HolyShield (defesa 40, 1 uso(s) restante(s))
+[mission] Dragon Lord inicia a missão Act
+[unleash] Dragon Lord usa FireBreath em Paladin (-30 EN, energia 90)
+[hit] Paladin sofre 20 de dano (40 bloqueado) → HP 220
+>> --- Rodada 3 ---
+[mission] Paladin inicia a missão Fight
+[unleash] Paladin usa Smite em Dragon Lord (-20 EN, energia 70)
+[hit] Dragon Lord sofre 70 de dano → HP 225
+[shield] Paladin ativa HolyShield (defesa 40, 0 uso(s) restante(s))
+[mission] Dragon Lord inicia a missão Act
+[unleash] Dragon Lord usa FireBreath em Paladin (-30 EN, energia 60)
+[hit] Paladin sofre 20 de dano (40 bloqueado) → HP 200
+>> --- Rodada 4 ---
+[mission] Paladin inicia a missão Fight
+[unleash] Paladin usa Strike em Dragon Lord (-10 EN, energia 60)
+[hit] Dragon Lord sofre 35 de dano → HP 190
+>> Paladin está sem escudo!
+[mission] Dragon Lord inicia a missão Act
+[transform] Dragon Lord assume a forma Enraged por 3 ação(ões) → Dragon Lord [HP 190/400 | EN 60/150 | forma Enraged]
+[shield] Dragon Lord ativa ScaleArmor (defesa 30, 1 uso(s) restante(s))
+[unleash] Dragon Lord usa FireBreath em Paladin (-30 EN, energia 30)
+[hit] Paladin sofre 120 de dano → HP 80
+>> --- Rodada 5 ---
+[mission] Paladin inicia a missão Fight
+[unleash] Paladin usa Smite em Dragon Lord (-20 EN, energia 40)
+[hit] Dragon Lord sofre 40 de dano (30 bloqueado) → HP 150
+>> Paladin está sem escudo!
+[mission] Dragon Lord inicia a missão Act
+[unleash] Dragon Lord usa FireBreath em Paladin (-30 EN, energia 0)
+[hit] Paladin sofre 120 de dano → HP 0
+[down] Paladin foi derrotado por Dragon Lord!
+>> Paladin [HP 0/260 | EN 40/120 | forma normal]
+>> Dragon Lord [HP 150/400 | EN 0/150 | forma Enraged]
+[exit 0]

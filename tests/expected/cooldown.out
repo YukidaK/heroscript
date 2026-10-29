@@ -1,0 +1,20 @@
+>> Turno 1
+[unleash] Blaze usa Inferno em Stone Golem (-10 EN, energia 90)
+[hit] Stone Golem sofre 50 de dano → HP 450
+>> Turno 2
+>> PowerOnCooldown → usando Ember
+[unleash] Blaze usa Ember em Stone Golem (-5 EN, energia 85)
+[hit] Stone Golem sofre 10 de dano → HP 440
+>> Turno 3
+>> PowerOnCooldown → usando Ember
+[unleash] Blaze usa Ember em Stone Golem (-5 EN, energia 80)
+[hit] Stone Golem sofre 10 de dano → HP 430
+>> Turno 4
+[unleash] Blaze usa Inferno em Stone Golem (-10 EN, energia 70)
+[hit] Stone Golem sofre 50 de dano → HP 380
+>> Turno 5
+>> PowerOnCooldown → usando Ember
+[unleash] Blaze usa Ember em Stone Golem (-5 EN, energia 65)
+[hit] Stone Golem sofre 10 de dano → HP 370
+>> Stone Golem [HP 370/500 | EN 100/100 | forma normal]
+[exit 0]

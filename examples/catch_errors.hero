@@ -1,0 +1,48 @@
+// Tratando HeroError pelo tipo com switch do Java (e.kind()).
+
+hero Gambler {
+    String name = "Gambler";
+    int energy = 25;
+
+    power AllIn {
+        cost = 20;
+        damage = 99;
+        cooldown = 1;
+    }
+
+    power Bluff {
+        cost = 0;
+        damage = 1;
+    }
+}
+
+villain Vault {
+    String name = "Bank Vault";
+    int health = 500;
+}
+
+battle {
+    summon Gambler as gambler;
+    summon Vault as vault;
+
+    for (int i = 1; i <= 4; i++) {
+        try {
+            unleash gambler.AllIn on vault;
+        } catch (HeroError e) {
+            switch (e.kind()) {
+                case "PowerOnCooldown" -> {
+                    announce "Tentativa " + i + ": AllIn recarregando, blefando...";
+                    unleash gambler.Bluff on vault;
+                }
+                case "InsufficientEnergy" -> {
+                    announce "Tentativa " + i + ": sem energia, recarregando";
+                    gambler.recharge(50);
+                }
+                default -> {
+                    announce "Erro inesperado: " + e.kind();
+                }
+            }
+        }
+    }
+    announce vault.status();
+}

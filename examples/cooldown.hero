@@ -1,0 +1,37 @@
+// Recarga (cooldown): um poder forte que precisa de descanso e um fraco para os turnos de espera.
+
+hero Blaze {
+    String name = "Blaze";
+
+    power Inferno {
+        cost = 10;
+        damage = 50;
+        cooldown = 2;
+    }
+
+    power Ember {
+        cost = 5;
+        damage = 10;
+    }
+}
+
+villain Golem {
+    String name = "Stone Golem";
+    int health = 500;
+}
+
+battle {
+    summon Blaze as blaze;
+    summon Golem as golem;
+
+    for (int turn = 1; turn <= 5; turn++) {
+        announce "Turno " + turn;
+        try {
+            unleash blaze.Inferno on golem;
+        } catch (HeroError e) {
+            announce e.kind() + " → usando Ember";
+            unleash blaze.Ember on golem;
+        }
+    }
+    announce golem.status();
+}

@@ -1,0 +1,32 @@
+// while + evolve: o aprendiz fica mais forte a cada golpe até derrubar o boneco de treino.
+
+hero Apprentice {
+    String name = "Apprentice";
+    int energy = 50;
+
+    power Spark {
+        cost = 15;
+        damage = 10;
+    }
+}
+
+villain Dummy {
+    String name = "Training Dummy";
+    int health = 120;
+}
+
+battle {
+    summon Apprentice as kid;
+    summon Dummy as dummy;
+
+    int round = 0;
+    while (!dummy.isDefeated()) {
+        round++;
+        if (kid.energy < 15) {
+            kid.recharge(50);
+        }
+        unleash kid.Spark on dummy;
+        evolve kid.Spark by 5;
+    }
+    announce "Treino concluído em " + round + " rodadas";
+}

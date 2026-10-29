@@ -1,0 +1,111 @@
+site_name: HeroScript
+site_description: Linguagem de programação de super-heróis transpilada para Java
+site_url: https://yukidak.github.io/heroscript/
+repo_url: https://github.com/YukidaK/heroscript
+repo_name: YukidaK/heroscript
+edit_uri: edit/main/docs/
+copyright: Projeto acadêmico — HeroScript
+
+theme:
+  name: material
+  language: pt-BR
+  icon:
+    logo: material/lightning-bolt
+    repo: fontawesome/brands/github
+  favicon: assets/favicon.svg
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: deep purple
+      accent: pink
+      toggle:
+        icon: material/weather-night
+        name: Modo escuro
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: deep purple
+      accent: pink
+      toggle:
+        icon: material/weather-sunny
+        name: Modo claro
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - navigation.indexes
+    - content.code.copy
+    - content.tabs.link
+    - search.suggest
+    - search.highlight
+
+extra_css:
+  - assets/extra.css
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.snippets:
+      base_path: ["."]
+      check_paths: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+nav:
+  - Início:
+      - index.md
+      - Instalação: instalacao.md
+      - Primeiro programa: primeiro-programa.md
+  - Linguagem:
+      - linguagem/index.md
+      - Personagens: linguagem/personagens.md
+      - Poderes e unleash: linguagem/poderes.md
+      - Gadgets e shield: linguagem/gadgets.md
+      - Formas e transform: linguagem/formas.md
+      - Secret: linguagem/secret.md
+      - Missões: linguagem/missoes.md
+      - Squads e combos: linguagem/squads.md
+      - Battle: linguagem/battle.md
+      - Java embutido: linguagem/java-embutido.md
+      - Erros: linguagem/erros.md
+      - Referência rápida: linguagem/referencia.md
+  - Exemplos:
+      - exemplos/index.md
+      - Olá, herói: exemplos/hello.md
+      - Iron Guardian: exemplos/iron.md
+      - Recarga de poderes: exemplos/cooldown.md
+      - Transformações: exemplos/transformations.md
+      - Treino com evolve: exemplos/evolve_loop.md
+      - Identidade secreta: exemplos/secret.md
+      - Squad e combos: exemplos/squad.md
+      - Missão de resgate: exemplos/rescue.md
+      - Torneio: exemplos/tournament.md
+      - Luta contra chefe: exemplos/boss_fight.md
+      - Tratando erros: exemplos/catch_errors.md
+      - Todos os erros: exemplos/errors.md
+  - Como funciona:
+      - como-funciona/index.md
+      - Lexer: como-funciona/lexer.md
+      - Parser e AST: como-funciona/parser.md
+      - Geração de Java: como-funciona/gerador.md
+      - Runtime: como-funciona/runtime.md
+      - Playground (WebAssembly): como-funciona/playground.md
+      - Testes: como-funciona/testes.md
+      - Estendendo a linguagem: como-funciona/estendendo.md
+  - Playground: playground/index.html

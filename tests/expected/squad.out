@@ -1,0 +1,18 @@
+[squad] Shadow Knight entra em DawnLeague (1 membro(s))
+[squad] Sky Titan entra em DawnLeague (2 membro(s))
+[squad] Storm Rider entra em DawnLeague (3 membro(s))
+[assemble] DawnLeague executa JusticeStorm com Shadow Knight + Sky Titan + Storm Rider em The Overlord (-20 EN cada)
+[hit] The Overlord sofre 180 de dano → HP 220
+>> HeroError: SquadUnavailable — JusticeStorm precisa de 3 membro(s) com 20 de energia, mas DawnLeague tem 2
+[assemble] DawnLeague executa TwinStrike com Shadow Knight + Sky Titan em The Overlord (-20 EN cada)
+[hit] The Overlord sofre 110 de dano → HP 110
+[shield] Shadow Knight ativa GrappleCape (defesa 15)
+[unleash] The Overlord usa DarkPulse em Shadow Knight (-20 EN, energia 80)
+[hit] Shadow Knight sofre 35 de dano (15 bloqueado) → HP 65
+[unleash] Sky Titan usa HeatVision em The Overlord (-20 EN, energia 60)
+[hit] The Overlord sofre 55 de dano → HP 55
+>> Shadow Knight [HP 65/100 | EN 20/60 | forma normal]
+>> Sky Titan [HP 200/200 | EN 60/120 | forma normal]
+>> Storm Rider [HP 100/100 | EN 0/20 | forma normal]
+>> The Overlord [HP 55/400 | EN 80/100 | forma normal]
+[exit 0]

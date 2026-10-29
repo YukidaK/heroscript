@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HeroScript Playground</title>
+  <meta name="description" content="Escreva e execute HeroScript no navegador: o compilador real roda numa JVM em WebAssembly (CheerpJ).">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-darker.min.css">
+  <link rel="stylesheet" href="playground.css">
+</head>
+<body>
+  <header class="bar">
+    <div class="brand">
+      <span class="logo" aria-hidden="true">⚡</span>
+      <h1>HeroScript <span>Playground</span></h1>
+    </div>
+    <div class="controls">
+      <label class="sr-only" for="example">Exemplo</label>
+      <select id="example" title="Carregar exemplo"></select>
+      <button id="run" class="primary" disabled title="Ctrl+Enter">▶ Executar</button>
+      <button id="java" disabled>Java gerado</button>
+      <button id="tokens" disabled>Tokens</button>
+      <button id="share" title="Copia um link com o código atual">Compartilhar</button>
+      <a class="docs" href="../">Documentação</a>
+    </div>
+  </header>
+
+  <main class="panes">
+    <section class="pane editor-pane">
+      <div class="pane-title">programa.hero</div>
+      <textarea id="code" spellcheck="false"></textarea>
+    </section>
+    <section class="pane output-pane">
+      <div class="pane-title"><span id="output-title">Saída</span><span id="timing"></span></div>
+      <pre id="output" aria-live="polite"></pre>
+    </section>
+  </main>
+
+  <footer class="status">
+    <span id="status">Carregando…</span>
+    <span class="hint">O compilador HeroScript e o compilador Java (ECJ) rodam no seu navegador via WebAssembly.</span>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+  <script src="https://cjrtnc.leaningtech.com/4.3/loader.js"></script>
+  <script src="playground.js"></script>
+</body>
+</html>

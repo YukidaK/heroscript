@@ -1,0 +1,20 @@
+>> HeroError: PowerNotFound — Spark não possui o poder Laser
+[unleash] Spark usa Zap em Minion (-20 EN, energia 10)
+[hit] Minion sofre 10 de dano → HP 0
+[down] Minion foi derrotado por Spark!
+>> HeroError: PowerOnCooldown — Zap de Spark recarrega em 1 ação(ões)
+>> HeroError: FriendlyFire — Spark não pode atacar o herói Bolt
+[shield] Spark ativa Buckler (defesa 5, 0 uso(s) restante(s))
+>> HeroError: GadgetUnavailable — Buckler de Spark não tem mais usos
+>> HeroError: GadgetNotFound — Spark não possui o gadget Jetpack
+[transform] Spark assume a forma Supercharge → Spark [HP 100/100 | EN 60/30 | forma Supercharge]
+[revert] Spark deixa a forma Supercharge
+>> HeroError: TransformationExpired — a forma Supercharge de Spark já foi esgotada
+>> HeroError: FormNotFound — Spark não possui a forma Giant
+>> HeroError: NotASquadMember — Bolt (Bolt) não pode entrar em Duo; membros aceitos: Spark
+[squad] Spark entra em Duo (1 membro(s))
+>> HeroError: SquadUnavailable — DoubleZap precisa de 2 membro(s) com 10 de energia, mas Duo tem 1
+>> HeroError: ComboNotFound — Duo não possui o combo MegaZap
+>> HeroError: CharacterDefeated — Minion está fora de combate
+HeroError: InsufficientEnergy — Spark precisa de 5 de energia para Static, mas tem 0
+[exit 1]

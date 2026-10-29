@@ -1,0 +1,8 @@
+>> Olá, HeroScript!
+[unleash] Rookie usa Punch em Thug (-10 EN, energia 90)
+[hit] Thug sofre 15 de dano → HP 15
+[unleash] Rookie usa Punch em Thug (-10 EN, energia 80)
+[hit] Thug sofre 15 de dano → HP 0
+[down] Thug foi derrotado por Rookie!
+>> Rookie [HP 100/100 | EN 80/100 | forma normal]
+[exit 0]

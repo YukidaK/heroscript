@@ -1,0 +1,58 @@
+// Arrays e for-each do Java: o campeão enfrenta vários vilões em sequência.
+
+hero Champion {
+    String name = "Champion";
+    int energy = 200;
+    int health = 250;
+
+    power Combo {
+        cost = 20;
+        damage = 45;
+    }
+
+    gadget Bracers {
+        defense = 20;
+    }
+}
+
+villain Brute {
+    String name = "Brute";
+    int health = 90;
+    power Attack { cost = 10; damage = 35; }
+}
+
+villain Ninja {
+    String name = "Ninja";
+    int health = 60;
+    power Attack { cost = 5; damage = 25; }
+}
+
+villain Wizard {
+    String name = "Wizard";
+    int health = 120;
+    power Attack { cost = 20; damage = 50; }
+}
+
+battle {
+    summon Champion as champ;
+    summon Brute as brute;
+    summon Ninja as ninja;
+    summon Wizard as wizard;
+
+    Villain[] rivals = { brute, ninja, wizard };
+    int wins = 0;
+
+    for (Villain rival : rivals) {
+        announce "Próximo desafiante: " + rival.name;
+        while (!rival.isDefeated()) {
+            unleash champ.Combo on rival;
+            if (!rival.isDefeated()) {
+                champ.shield(Bracers);
+                unleash rival.Attack on champ;
+            }
+        }
+        champ.recharge(40);
+        wins++;
+    }
+    announce champ.name + " venceu " + wins + " lutas → " + champ.status();
+}

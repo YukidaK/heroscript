@@ -1,0 +1,7 @@
+// Erro semântico: vilões não podem ser membros de squad.
+villain Joker {
+}
+
+squad Gang {
+    members Joker;
+}

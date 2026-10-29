@@ -1,0 +1,58 @@
+// Formas: duração em ações, número de usos, modificadores e revert.
+
+hero Shifter {
+    String name = "Shifter";
+    int energy = 80;
+
+    power Claw {
+        cost = 10;
+        damage = 20;
+    }
+
+    form Beast {
+        duration = 2;   // volta ao normal sozinho depois de 2 ações
+        uses = 2;       // só pode ser usada duas vezes
+        damage *= 3;
+        defense += 10;
+    }
+
+    form Titan {        // sem duration: dura até o revert
+        health += 100;
+        cost -= 5;
+    }
+}
+
+villain Hunter {
+    String name = "Hunter";
+    int health = 300;
+
+    power Spear {
+        cost = 10;
+        damage = 40;
+    }
+}
+
+battle {
+    summon Shifter as shifter;
+    summon Hunter as hunter;
+
+    unleash shifter.Claw on hunter;
+    transform shifter.Beast;
+    unleash hunter.Spear on shifter;    // a defesa da forma reduz o dano
+    unleash shifter.Claw on hunter;     // dano triplicado
+    unleash shifter.Claw on hunter;     // segunda ação: Beast expira
+
+    transform shifter.Titan;
+    unleash shifter.Claw on hunter;     // custa 5 a menos
+    announce shifter.status();
+    revert shifter;                     // vida acima do máximo é cortada
+    announce shifter.status();
+
+    transform shifter.Beast;            // segundo (e último) uso
+    revert shifter;
+    try {
+        transform shifter.Beast;
+    } catch (HeroError e) {
+        announce e.getMessage();
+    }
+}

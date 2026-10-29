@@ -1,0 +1,7 @@
+// Erro proposital: falta ';' depois de damage.
+hero Broken {
+    power Punch {
+        cost = 5;
+        damage = 10
+    }
+}

@@ -1,0 +1,23 @@
+[mission] Iron Guardian inicia a missão SaveCity
+[unleash] Iron Guardian usa RepulsorBlast em Crusher (-25 EN, energia 75)
+[hit] Crusher sofre 60 de dano → HP 340
+[recharge] Iron Guardian recupera 25 de energia → 100
+[shield] Iron Guardian ativa Armor (defesa 40, 1 uso(s) restante(s))
+[transform] Iron Guardian assume a forma OverdriveSuit por 2 ação(ões) → Iron Guardian [HP 150/150 | EN 100/100 | forma OverdriveSuit]
+[unleash] Iron Guardian usa UniBeam em Crusher (-40 EN, energia 60)
+[hit] Crusher sofre 180 de dano → HP 160
+>> Iron Guardian [HP 150/150 | EN 60/100 | forma OverdriveSuit]
+[unleash] Crusher usa GroundSlam em Iron Guardian (-30 EN, energia 70)
+[hit] Iron Guardian sofre 10 de dano (60 bloqueado) → HP 140
+[unleash] Iron Guardian usa RepulsorBlast em Crusher (-25 EN, energia 35)
+[hit] Crusher sofre 120 de dano → HP 40
+[transform] a forma OverdriveSuit de Iron Guardian expirou
+[revert] Iron Guardian deixa a forma OverdriveSuit
+[evolve] RepulsorBlast de Iron Guardian agora causa 75 de dano
+[recharge] Iron Guardian recupera 30 de energia → 65
+[unleash] Iron Guardian usa RepulsorBlast em Crusher (-25 EN, energia 40)
+[hit] Crusher sofre 75 de dano → HP 0
+[down] Crusher foi derrotado por Iron Guardian!
+>> Iron Guardian [HP 140/150 | EN 40/100 | forma normal]
+>> Crusher [HP 0/400 | EN 70/100 | forma normal]
+[exit 0]

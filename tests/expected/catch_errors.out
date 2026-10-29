@@ -1,0 +1,11 @@
+[unleash] Gambler usa AllIn em Bank Vault (-20 EN, energia 5)
+[hit] Bank Vault sofre 99 de dano → HP 401
+>> Tentativa 2: AllIn recarregando, blefando...
+[unleash] Gambler usa Bluff em Bank Vault (-0 EN, energia 5)
+[hit] Bank Vault sofre 1 de dano → HP 400
+>> Tentativa 3: sem energia, recarregando
+[recharge] Gambler recupera 20 de energia → 25
+[unleash] Gambler usa AllIn em Bank Vault (-20 EN, energia 5)
+[hit] Bank Vault sofre 99 de dano → HP 301
+>> Bank Vault [HP 301/500 | EN 100/100 | forma normal]
+[exit 0]

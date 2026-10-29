@@ -1,0 +1,25 @@
+// Primeiro programa: um herói, um vilão e dois golpes.
+
+hero Rookie {
+    String name = "Rookie";
+
+    power Punch {
+        cost = 10;
+        damage = 15;
+    }
+}
+
+villain Thug {
+    String name = "Thug";
+    int health = 30;
+}
+
+battle {
+    summon Rookie as rookie;
+    summon Thug as thug;
+
+    announce "Olá, HeroScript!";
+    unleash rookie.Punch on thug;
+    unleash rookie.Punch on thug;
+    announce rookie.status();
+}

@@ -1,0 +1,37 @@
+>> Próximo desafiante: Brute
+[unleash] Champion usa Combo em Brute (-20 EN, energia 180)
+[hit] Brute sofre 45 de dano → HP 45
+[shield] Champion ativa Bracers (defesa 20)
+[unleash] Brute usa Attack em Champion (-10 EN, energia 90)
+[hit] Champion sofre 15 de dano (20 bloqueado) → HP 235
+[unleash] Champion usa Combo em Brute (-20 EN, energia 160)
+[hit] Brute sofre 45 de dano → HP 0
+[down] Brute foi derrotado por Champion!
+[recharge] Champion recupera 40 de energia → 200
+>> Próximo desafiante: Ninja
+[unleash] Champion usa Combo em Ninja (-20 EN, energia 180)
+[hit] Ninja sofre 45 de dano → HP 15
+[shield] Champion ativa Bracers (defesa 20)
+[unleash] Ninja usa Attack em Champion (-5 EN, energia 95)
+[hit] Champion sofre 5 de dano (20 bloqueado) → HP 230
+[unleash] Champion usa Combo em Ninja (-20 EN, energia 160)
+[hit] Ninja sofre 45 de dano → HP 0
+[down] Ninja foi derrotado por Champion!
+[recharge] Champion recupera 40 de energia → 200
+>> Próximo desafiante: Wizard
+[unleash] Champion usa Combo em Wizard (-20 EN, energia 180)
+[hit] Wizard sofre 45 de dano → HP 75
+[shield] Champion ativa Bracers (defesa 20)
+[unleash] Wizard usa Attack em Champion (-20 EN, energia 80)
+[hit] Champion sofre 30 de dano (20 bloqueado) → HP 200
+[unleash] Champion usa Combo em Wizard (-20 EN, energia 160)
+[hit] Wizard sofre 45 de dano → HP 30
+[shield] Champion ativa Bracers (defesa 20)
+[unleash] Wizard usa Attack em Champion (-20 EN, energia 60)
+[hit] Champion sofre 30 de dano (20 bloqueado) → HP 170
+[unleash] Champion usa Combo em Wizard (-20 EN, energia 140)
+[hit] Wizard sofre 45 de dano → HP 0
+[down] Wizard foi derrotado por Champion!
+[recharge] Champion recupera 40 de energia → 180
+>> Champion venceu 3 lutas → Champion [HP 170/250 | EN 180/200 | forma normal]
+[exit 0]

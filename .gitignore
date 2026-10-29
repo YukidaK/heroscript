@@ -1,0 +1,6 @@
+build/
+site/
+.venv/
+__pycache__/
+# gerado por scripts/build_playground.sh docs/playground
+docs/playground/

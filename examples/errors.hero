@@ -1,0 +1,82 @@
+// Demonstra cada HeroError tratado com try/catch (sintaxe Java normal).
+
+hero Spark {
+    String name = "Spark";
+    int energy = 30;
+
+    power Zap {
+        cost = 20;
+        damage = 10;
+        cooldown = 1;
+    }
+
+    power Static {
+        cost = 5;
+        damage = 1;
+    }
+
+    gadget Buckler {
+        defense = 5;
+        uses = 1;
+    }
+
+    form Supercharge {
+        uses = 1;
+        energy += 50;
+    }
+}
+
+hero Bolt {
+    String name = "Bolt";
+}
+
+villain Minion {
+    String name = "Minion";
+    int health = 10;
+}
+
+squad Duo {
+    members Spark;
+    combo DoubleZap {
+        cost = 20;
+        damage = 30;
+        requires = 2;
+    }
+}
+
+battle {
+    summon Spark as spark;
+    summon Bolt as bolt;
+    summon Minion as minion;
+    summon Duo as duo;
+
+    try { unleash spark.Laser on minion; } catch (HeroError e) { announce e.getMessage(); }
+
+    unleash spark.Zap on minion;
+    try { unleash spark.Zap on minion; } catch (HeroError e) { announce e.getMessage(); }
+
+    try { unleash spark.Zap on bolt; } catch (HeroError e) { announce e.getMessage(); }
+
+    spark.shield(Buckler);
+    try { spark.shield(Buckler); } catch (HeroError e) { announce e.getMessage(); }
+
+    try { spark.shield(Jetpack); } catch (HeroError e) { announce e.getMessage(); }
+
+    transform spark.Supercharge;
+    revert spark;
+    try { transform spark.Supercharge; } catch (HeroError e) { announce e.getMessage(); }
+
+    try { transform spark.Giant; } catch (HeroError e) { announce e.getMessage(); }
+
+    try { recruit bolt into duo; } catch (HeroError e) { announce e.getMessage(); }
+
+    recruit spark into duo;
+    try { assemble duo.DoubleZap on minion; } catch (HeroError e) { announce e.getMessage(); }
+    try { assemble duo.MegaZap on minion; } catch (HeroError e) { announce e.getMessage(); }
+
+    try { unleash minion.Anything on spark; } catch (HeroError e) { announce e.getMessage(); }
+
+    spark.energy = 0;
+    unleash spark.Static on minion;   // não tratado: encerra o programa com InsufficientEnergy
+    announce "esta linha nunca é executada";
+}

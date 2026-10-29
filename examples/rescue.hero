@@ -1,0 +1,52 @@
+// Missões com parâmetros chamando outras missões, inclusive de outro herói.
+
+hero Medic {
+    String name = "Medic";
+
+    power Adrenaline {
+        cost = 30;
+    }
+
+    mission Support(Hero ally) {
+        unleash Adrenaline;          // poder sem alvo
+        ally.recharge(40);
+        announce name + " reabasteceu " + ally.name;
+    }
+}
+
+hero Striker {
+    String name = "Striker";
+    int energy = 40;
+
+    power Barrage {
+        cost = 35;
+        damage = 50;
+    }
+
+    mission Engage(Fighter captor) {
+        unleash Barrage on captor;
+    }
+
+    mission Rescue(Fighter captor, Medic medic) {
+        Engage(captor);
+        if (energy < 35) {
+            medic.Support(this);
+        }
+        Engage(captor);
+        announce "Refém resgatado das mãos de " + captor.name + "!";
+    }
+}
+
+villain Kidnapper {
+    String name = "Kidnapper";
+}
+
+battle {
+    summon Medic as medic;
+    summon Striker as striker;
+    summon Kidnapper as kidnapper;
+
+    striker.Rescue(kidnapper, medic);
+    announce striker.status();
+    announce medic.status();
+}

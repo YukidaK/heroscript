@@ -1,0 +1,9 @@
+// Erro no código Java embutido: o javac reclama e a mensagem aponta a linha do .hero.
+hero Rookie {
+    power Jab { cost = 1; damage = 2; }
+}
+
+battle {
+    summon Rookie as r;
+    int x = "texto";
+}

@@ -1,0 +1,93 @@
+// Squads: heróis diferentes (gadgets, armadura, poderes naturais) cooperando em um combo.
+
+hero ShadowKnight {
+    String name = "Shadow Knight";
+    int energy = 60;
+
+    gadget GrappleCape {
+        defense = 15;
+    }
+
+    power SmokeStrike {
+        cost = 10;
+        damage = 25;
+    }
+}
+
+hero SkyTitan {
+    String name = "Sky Titan";
+    int energy = 120;
+    int health = 200;
+
+    power HeatVision {
+        cost = 20;
+        damage = 55;
+    }
+}
+
+hero StormRider {
+    String name = "Storm Rider";
+    int energy = 20;
+
+    power ThunderStrike {
+        cost = 15;
+        damage = 40;
+    }
+}
+
+villain Overlord {
+    String name = "The Overlord";
+    int health = 400;
+
+    power DarkPulse {
+        cost = 20;
+        damage = 50;
+    }
+}
+
+squad DawnLeague {
+    members ShadowKnight, SkyTitan, StormRider;
+
+    combo JusticeStorm {
+        cost = 60;
+        damage = 180;
+        requires = 3;
+    }
+
+    combo TwinStrike {
+        cost = 40;
+        damage = 110;
+        requires = 2;
+    }
+}
+
+battle {
+    summon ShadowKnight as knight;
+    summon SkyTitan as titan;
+    summon StormRider as storm;
+    summon Overlord as overlord;
+    summon DawnLeague as league;
+
+    recruit knight into league;
+    recruit titan into league;
+    recruit storm into league;
+
+    assemble league.JusticeStorm on overlord;   // cada um paga 20 de energia
+
+    // Storm Rider ficou sem energia: só dois membros podem participar agora.
+    try {
+        assemble league.JusticeStorm on overlord;
+    } catch (HeroError e) {
+        announce e.getMessage();
+    }
+    assemble league.TwinStrike on overlord;
+
+    knight.shield(GrappleCape);
+    unleash overlord.DarkPulse on knight;
+    unleash titan.HeatVision on overlord;
+
+    for (Hero h : league.members()) {
+        announce h.status();
+    }
+    announce overlord.status();
+}

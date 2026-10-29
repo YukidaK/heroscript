@@ -1,0 +1,16 @@
+[mission] Striker inicia a missão Rescue
+[mission] Striker inicia a missão Engage
+[unleash] Striker usa Barrage em Kidnapper (-35 EN, energia 5)
+[hit] Kidnapper sofre 50 de dano → HP 50
+[mission] Medic inicia a missão Support
+[unleash] Medic usa Adrenaline (-30 EN, energia 70)
+[recharge] Striker recupera 35 de energia → 40
+>> Medic reabasteceu Striker
+[mission] Striker inicia a missão Engage
+[unleash] Striker usa Barrage em Kidnapper (-35 EN, energia 5)
+[hit] Kidnapper sofre 50 de dano → HP 0
+[down] Kidnapper foi derrotado por Striker!
+>> Refém resgatado das mãos de Kidnapper!
+>> Striker [HP 100/100 | EN 5/40 | forma normal]
+>> Medic [HP 100/100 | EN 70/100 | forma normal]
+[exit 0]
