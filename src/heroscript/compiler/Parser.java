@@ -13,21 +13,29 @@ public class Parser {
 
     /** Palavras que iniciam um comando HeroScript dentro de mission/battle. */
     private static final Set<String> STATEMENT_KEYWORDS =
-            Set.of("unleash", "transform", "revert", "evolve", "summon", "recruit", "assemble", "announce");
+            Set.of("unleash", "transform", "revert", "evolve", "summon", "recruit", "assemble", "announce", "kryptonite", "secret");
 
     private final List<Token> tokens;
     private final String file;
     private int pos = 0;
+    private boolean inBatcave;
+    private int flashDepth;
+    private boolean rootFlash;
+    private int battles;
+    private int deadpoolDepth;
+    private int hulkDepth;
+    private final java.util.Deque<Boolean> hulkRegions=new java.util.ArrayDeque<>();
 
     public Parser(List<Token> tokens, String file) {
         this.tokens = tokens;
         this.file = file;
     }
 
-    // program := (character | squad | battle)* EOF
+    // program := declarations with at most one battle or root flashPoint entry.
     public Program parse() {
         List<CharacterDecl> characters = new ArrayList<>();
         List<SquadDecl> squads = new ArrayList<>();
+        List<BatcaveDecl> batcaves = new ArrayList<>();
         Block battle = null;
         while (!check(TokenType.EOF)) {
             Token t = peek();
@@ -35,15 +43,152 @@ public class Parser {
                 characters.add(parseCharacter());
             } else if (t.is("squad")) {
                 squads.add(parseSquad());
+            } else if (t.is("batcave")) {
+                batcaves.add(parseBatcave());
             } else if (t.is("battle")) {
                 if (battle != null) throw error(t, "só pode existir um bloco battle por arquivo");
                 advance();
+                battles++;
                 battle = parseBlock();
+            } else if (t.is("flashPoint")) {
+                if (battle != null) throw error(t, "só pode existir uma entrada battle ou flashPoint por arquivo");
+                rootFlash = true;
+                FlashPoint point = parseFlashPoint();
+                rootFlash = false;
+                battle = new Block(point.body().open(), List.of(point));
             } else {
-                throw error(t, "esperado 'hero', 'villain', 'squad' ou 'battle', encontrado '" + t.text() + "'");
+                throw error(t, "esperado 'hero', 'villain', 'squad', 'batcave', 'battle' ou 'flashPoint', encontrado '" + t.text() + "'");
             }
         }
-        return new Program(characters, squads, battle);
+        return new Program(characters, squads, batcaves, battle);
+    }
+
+    private BatcaveDecl parseBatcave() {
+        advance();
+        Token name = expectIdent("nome da batcave");
+        expect("{");
+        List<FieldDecl> fields = new ArrayList<>();
+        List<CaveMethod> methods = new ArrayList<>();
+        inBatcave = true;
+        while (!check("}")) {
+            Token start = peek();
+            if (check(TokenType.EOF)) throw error(start, "'}' faltando para fechar batcave " + name.text());
+            if (start.is("villain")) throw error(start, "villain não pode ser declarado dentro de batcave");
+            if (Set.of("hero", "squad", "batcave", "class", "interface", "record", "kryptonite", "mission").contains(start.text())) {
+                throw error(start, "dentro de batcave declare campos comuns e métodos; '" + start.text() + "' não é suportado aqui");
+            }
+            parseJavaMember(fields, methods);
+        }
+        expect("}");
+        inBatcave = false;
+        return new BatcaveDecl(name, fields, methods);
+    }
+
+    private void parseJavaMember(List<FieldDecl> fields, List<CaveMethod> methods) {
+            boolean secret = match("secret");
+            List<Token> header = new ArrayList<>();
+            boolean initializer = false;
+            while (true) {
+                Token t = peek();
+                if (t.is("secret") || t.is("kryptonite")) throw error(t, "modificadores repetidos ou combinação secret + kryptonite não permitida");
+                if (t.is("(") && !initializer) {
+                    if (header.size() < 2 || !header.get(header.size() - 1).isIdent()) {
+                        throw error(t, "use um método com tipo de retorno; construtores explícitos não são suportados");
+                    }
+                    Token methodName = header.get(header.size() - 1);
+                    if (header.subList(0, header.size() - 1).stream().allMatch(token -> Set.of("public", "private", "protected", "static", "final", "synchronized").contains(token.text()))) {
+                        throw error(methodName, "construtores explícitos não são suportados em batcave");
+                    }
+                    advance();
+                    List<Token> params = new ArrayList<>();
+                    int depth = 1;
+                    while (depth > 0) {
+                        Token param = advance();
+                        if (param.type() == TokenType.EOF || param.is("{")) throw error(param, "')' faltando nos parâmetros da batcave");
+                        if (param.is("(")) depth++;
+                        if (param.is(")")) depth--;
+                        if (depth > 0) params.add(param);
+                    }
+                    rejectUnsupportedModifiers(params);
+                    methods.add(new CaveMethod(methodName, header, params, parseBlock(), secret));
+                    break;
+                }
+                if (t.is(";") || initializer) {
+                    header.addAll(collectUntilSemicolon("campo da batcave"));
+                    rejectUnsupportedModifiers(header);
+                    if (header.stream().anyMatch(token -> token.is("allow"))) throw error(header.get(0), "allow só é permitido em campos secret de personagens");
+                    fields.add(new FieldDecl(header, secret));
+                    break;
+                }
+                if (t.type() == TokenType.EOF || t.is("}") || t.is("{")) throw error(t, "campo ou método incompleto em batcave");
+                header.add(advance());
+                initializer = t.is("=");
+            }
+    }
+
+    private void rejectUnsupportedModifiers(List<Token> tokens) {
+        for (Token token : tokens) {
+            if (token.is("secret") || token.is("kryptonite")) throw error(token, "secret e kryptonite não podem ser combinados ou usados nesta posição");
+        }
+    }
+
+    private boolean secretMethodAhead() {
+        for (int i = 1; pos + i < tokens.size(); i++) {
+            Token token = peekAt(i);
+            if (token.is("(") || token.is("mission")) return true;
+            if (token.is("=") || token.is(";") || token.is("}") || token.type() == TokenType.EOF) return false;
+        }
+        return false;
+    }
+
+    private boolean javaMethodAhead() {
+        for (int i = 0; pos + i < tokens.size(); i++) {
+            Token token = peekAt(i);
+            if (token.is("@")) return false;
+            if (token.is("(")) return true;
+            if (token.is("=") || token.is(";") || token.is("}") || token.type() == TokenType.EOF) return false;
+        }
+        return false;
+    }
+
+    private Stmt parseSupervision() {
+        Token kw = advance();
+        expect(".");
+        Token operation = expectIdent("getValue ou getMethod");
+        expect("(");
+        if (operation.is("getValue")) {
+            Token name = expectIdent("variável para supervision.getValue");
+            expect(")");
+            expect(";");
+            return new ValueObservation(kw, name);
+        }
+        if (!operation.is("getMethod")) throw error(operation, "supervision aceita getValue ou getMethod");
+        StringBuilder query = new StringBuilder();
+        if (check(TokenType.STRING)) {
+            String literal = advance().text();
+            String value = literal.substring(1, literal.length() - 1);
+            if (value.contains("\\")) throw error(operation, "use uma seleção de método sem escapes");
+            query.append(value);
+        } else {
+            int depth = 0;
+            while (!(check(")") && depth == 0)) {
+                Token token = peek();
+                if (token.type() == TokenType.EOF || token.is(";") || token.is("{") || token.is("}")) {
+                    throw error(operation, "seleção incompleta em supervision.getMethod");
+                }
+                if (!token.isIdent() && !Set.of(".", ",", "(", ")", "[", "]", "<", ">", ">>", ">>>", "?", "...").contains(token.text())) {
+                    throw error(token, "getMethod recebe uma identificação de método, não uma expressão");
+                }
+                advance();
+                if (token.is("(")) depth++;
+                if (token.is(")")) depth--;
+                query.append(token.text());
+            }
+        }
+        expect(")");
+        expect(";");
+        if (query.toString().isBlank()) throw error(operation, "informe o método para supervision.getMethod");
+        return new MethodObservation(kw, query.toString());
     }
 
     // character := ('hero' | 'villain') IDENT '{' member* '}'
@@ -55,9 +200,11 @@ public class Parser {
         List<PropertyBlock> powers = new ArrayList<>(), gadgets = new ArrayList<>(), forms = new ArrayList<>();
         List<SecretDecl> secrets = new ArrayList<>();
         List<MissionDecl> missions = new ArrayList<>();
+        List<CaveMethod> methods = new ArrayList<>();
         while (!check("}")) {
             Token t = peek();
             if (check(TokenType.EOF)) throw error(t, "'}' faltando para fechar " + name.text());
+            if (t.is("kryptonite")) throw error(t, "kryptonite nesta etapa só é permitido em variáveis locais de battle, mission ou métodos de batcave");
             if (t.is("power")) {
                 advance();
                 powers.add(parsePropertyBlock());
@@ -68,16 +215,26 @@ public class Parser {
                 advance();
                 forms.add(parsePropertyBlock());
             } else if (t.is("secret")) {
-                secrets.add(parseSecret());
+                if (peekAt(1).is("mission")) {
+                    advance();
+                    MissionDecl mission = parseMission();
+                    missions.add(new MissionDecl(mission.name(), mission.params(), mission.body(), true));
+                } else if (secretMethodAhead()) {
+                    parseJavaMember(fields, methods);
+                } else {
+                    secrets.add(parseSecret());
+                }
             } else if (t.is("mission")) {
                 missions.add(parseMission());
+            } else if (javaMethodAhead()) {
+                parseJavaMember(fields, methods);
             } else {
                 List<Token> field = collectUntilSemicolon("atributo");
                 fields.add(new FieldDecl(field));
             }
         }
         expect("}");
-        return new CharacterDecl(name, villain, fields, powers, gadgets, forms, secrets, missions);
+        return new CharacterDecl(name, villain, fields, powers, gadgets, forms, secrets, missions, methods);
     }
 
     // propertyBlock := IDENT '{' (IDENT ('=' | '+=' | '-=' | '*=') expr ';')* '}'
@@ -103,6 +260,7 @@ public class Parser {
     // secret := 'secret' type IDENT ('=' expr)? ('allow' IDENT (',' IDENT)*)? ';'
     private SecretDecl parseSecret() {
         Token kw = advance();
+        if (check("kryptonite")) throw error(peek(), "a combinação secret + kryptonite não é permitida");
         List<Token> decl = new ArrayList<>();
         while (!check(";") && !check("allow")) {
             if (check(TokenType.EOF) || check("}")) throw error(peek(), "';' faltando no secret");
@@ -123,6 +281,14 @@ public class Parser {
         }
         int nameIdx = eq == -1 ? decl.size() - 1 : eq - 1;
         if (nameIdx < 1 || !decl.get(nameIdx).isIdent()) throw error(kw, "use: secret Tipo nome = valor allow Missao;");
+        rejectUnsupportedModifiers(decl);
+        int depth = 0;
+        for (int i = Math.max(0, eq + 1); eq >= 0 && i < decl.size(); i++) {
+            Token token = decl.get(i);
+            if (token.is("(") || token.is("[") || token.is("{")) depth++;
+            if (token.is(")") || token.is("]") || token.is("}")) depth--;
+            if (depth == 0 && token.is(",")) throw error(token, "declare uma variável secret por instrução");
+        }
         List<Token> init = eq == -1 ? List.of() : decl.subList(eq + 1, decl.size());
         return new SecretDecl(decl.get(nameIdx), decl.subList(0, nameIdx), init, allowed);
     }
@@ -139,7 +305,8 @@ public class Parser {
             }
             expect(")");
         }
-        return new MissionDecl(name, params, parseBlock());
+        rejectUnsupportedModifiers(params);
+        return new MissionDecl(name, params, parseBlock(), false);
     }
 
     // squad := 'squad' IDENT '{' ('members' IDENT (',' IDENT)* ';' | 'combo' propertyBlock)* '}'
@@ -178,6 +345,68 @@ public class Parser {
 
     private Stmt parseStatement() {
         Token t = peek();
+        if(t.is("hulksmash")) {
+            advance(); expect("(");
+            List<Token> condition=new ArrayList<>();
+            int depth=1;
+            while(depth>0) {
+                Token part=advance();
+                if(part.type()==TokenType.EOF)throw error(t,"condição de hulksmash não foi fechada");
+                if(part.is("("))depth++;
+                if(part.is(")"))depth--;
+                if(depth>0)condition.add(part);
+            }
+            if(condition.isEmpty())throw error(t,"hulksmash exige condição");
+            hulkDepth++;
+            hulkRegions.push(false);
+            Block body;
+            try { body=parseBlock(); } finally { hulkDepth--; hulkRegions.pop(); }
+            return new HulkSmash(t,List.copyOf(condition),HulkRegions.executable(body),body);
+        }
+        if(t.is("blackwidow")) {
+            advance();
+            if(hulkDepth==0)throw error(t,"blackwidow só pode ser usado dentro de hulksmash");
+            boolean previous=hulkRegions.pop(); hulkRegions.push(true);
+            try { return new BlackWidow(t,parseBlock()); }
+            finally { hulkRegions.pop(); hulkRegions.push(previous); }
+        }
+        if(t.is("hulkbuster")) {
+            advance();
+            if(hulkDepth==0)throw error(t,"hulkbuster só pode ser usado dentro de hulksmash");
+            expect(";");
+            return new HulkBuster(t);
+        }
+        if(t.is("batplan")) {
+            advance(); expect("(");
+            Token target=expectIdent("referência de objeto para batplan");
+            expect(")"); expect(";");
+            return new Batplan(t,target);
+        }
+        if (t.is("deadpoolAction")) return parseDeadpoolAction();
+        if (t.is("flashPoint")) return parseFlashPoint();
+        if (t.is("flashtravel")) {
+            advance();
+            boolean ignored=!hulkRegions.isEmpty()&&!hulkRegions.peek();
+            if (!ignored&&deadpoolDepth>0) throw error(t,"flashtravel não é permitido dentro de deadpoolAction, inclusive em blocos internos");
+            if (!ignored&&flashDepth == 0) throw error(t, "flashtravel só pode ser usado dentro de flashPoint");
+            Token destination = advance();
+            if (destination.type() != TokenType.NUMBER || !destination.text().matches("[1-9][0-9]*")) {
+                throw error(destination, "flashtravel exige um número inteiro positivo de linha física");
+            }
+            try { Integer.parseInt(destination.text()); }
+            catch (NumberFormatException e) { throw error(destination, "número de linha fora do intervalo suportado"); }
+            expect(";");
+            return new FlashTravel(t, destination);
+        }
+        if (t.is("battle") && flashDepth > 0) {
+            if (!rootFlash || ++battles > 1) throw error(t, "battle só pode aparecer uma vez dentro do flashPoint de entrada");
+            advance();
+            return parseBlock();
+        }
+        if (t.is("supervision") && peekAt(1).is(".")) return parseSupervision();
+        if (inBatcave && t.is("villain")) throw error(t, "villain não pode ser declarado dentro de batcave");
+        if (t.is("secret") && peekAt(1).is("kryptonite")) throw error(t, "a combinação secret + kryptonite não é permitida");
+        if (t.is("kryptonite") && peekAt(1).is("secret")) throw error(t, "a combinação secret + kryptonite não é permitida");
         if (t.is("{")) return parseBlock();
         if (t.isIdent() && STATEMENT_KEYWORDS.contains(t.text()) && !peekAt(1).is("=")) {
             return parseHeroStatement();
@@ -185,9 +414,67 @@ public class Parser {
         return parseRaw();
     }
 
+    private FlashPoint parseFlashPoint() {
+        Token keyword = expect("flashPoint");
+        flashDepth++;
+        Block body = parseBlock();
+        flashDepth--;
+        return new FlashPoint(keyword, body);
+    }
+
+    private DeadpoolAction parseDeadpoolAction() {
+        Token keyword=expect("deadpoolAction");
+        expect("(");
+        expect("chance");
+        expect("=");
+        Token value=advance();
+        int chance;
+        try {
+            if(value.type()!=TokenType.NUMBER || !value.text().matches("[0-9]+")) throw new NumberFormatException();
+            chance=Integer.parseInt(value.text());
+            if(chance>100)throw new NumberFormatException();
+        } catch(NumberFormatException e) {
+            throw error(value,"chance de deadpoolAction deve ser um inteiro literal de 0 a 100");
+        }
+        if(check(","))throw error(peek(),"deadpoolAction aceita somente chance; seed e outros parâmetros não são suportados");
+        expect(")");
+        deadpoolDepth++;
+        Block body=parseBlock();
+        deadpoolDepth--;
+        return new DeadpoolAction(keyword,chance,body);
+    }
+
     private Stmt parseHeroStatement() {
         Token kw = advance();
         switch (kw.text()) {
+            case "secret": {
+                pos--;
+                SecretDecl declaration = parseSecret();
+                if (!declaration.allowed().isEmpty()) throw error(kw, "allow não é permitido em variáveis locais secret");
+                if (declaration.init().isEmpty()) throw error(kw, "variável local secret exige inicializador");
+                if (declaration.type().stream().anyMatch(t -> t.is("var") || t.is("public") || t.is("private") || t.is("static"))) {
+                    throw error(kw, "use secret [final] Tipo nome = valor;");
+                }
+                return new SecretLocal(kw,declaration);
+            }
+            case "kryptonite": {
+                boolean immutable = match("final");
+                Token type = expectIdent("tipo primitivo ou String");
+                if (!Set.of("byte", "short", "int", "long", "float", "double", "boolean", "char", "String").contains(type.text())) {
+                    throw error(type, "kryptonite aceita apenas tipos primitivos ou String");
+                }
+                Token name = expectIdent("nome da variável kryptonite");
+                expect("=");
+                List<Token> init = collectExpr("inicializador kryptonite");
+                int depth = 0;
+                for (Token token : init) {
+                    if (token.is("(") || token.is("[") || token.is("{")) depth++;
+                    if (token.is(")") || token.is("]") || token.is("}")) depth--;
+                    if (depth == 0 && token.is(",")) throw error(token, "declare uma variável kryptonite por instrução");
+                }
+                expect(";");
+                return new Kryptonite(kw, type, name, immutable, init);
+            }
             case "unleash": {
                 Token[] sp = subjectAndName("poder");
                 List<Token> target = match("on") ? collectExpr("alvo") : List.of();

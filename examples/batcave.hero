@@ -1,0 +1,42 @@
+batcave WayneSecurity {
+    int attempts = 0;
+    final String accessCode = "EXEMPLO";
+
+    boolean validate(String code) {
+        return accessCode.equals(code);
+    }
+
+    public boolean authenticate(String code) {
+        attempts++;
+        supervision.getValue(attempts);
+        kryptonite String received = code;
+        supervision.getValue(received);
+        return validate(code);
+    }
+
+    public int getAttempts() {
+        return attempts;
+    }
+
+    public void simulateFailure() {
+        int internal = 12345;
+        supervision.getValue(internal);
+        throw new IllegalStateException("Falha de teste");
+    }
+}
+
+battle {
+    WayneSecurity security = new WayneSecurity();
+    WayneSecurity other = new WayneSecurity();
+    announce "Acesso autorizado: " + security.authenticate("EXEMPLO");
+    announce "Acesso incorreto: " + security.authenticate("incorreto");
+    announce "Tentativas na primeira: " + security.getAttempts();
+    announce "Tentativas na segunda: " + other.getAttempts();
+    try {
+        security.simulateFailure();
+    } catch (IllegalStateException e) {
+        announce "Falha tratada fora da batcave";
+    }
+    int visible = 7;
+    supervision.getValue(visible);
+}

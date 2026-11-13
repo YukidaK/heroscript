@@ -1,6 +1,7 @@
 package heroscript.compiler;
 
 import heroscript.runtime.Arena;
+import heroscript.runtime.Batplan;
 
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
@@ -43,6 +44,27 @@ public final class JavaRunner {
 
     private JavaRunner() {}
 
+    /** Same compilation path as check/run, with structured diagnostics and no execution. */
+    static void diagnose(String file, JavaGenerator.Output out, java.util.function.Consumer<SpiderSense.Issue> sink) {
+        JavaCompiler compiler=findCompiler();
+        if(compiler==null)throw new IllegalStateException("Nenhum compilador Java disponível");
+        Path dir=compile(compiler,file,out,new PrintStream(java.io.OutputStream.nullOutputStream()),sink);
+        deleteQuietly(dir);
+    }
+
+    /** Compile without loading or executing the generated program. */
+    public static boolean validate(String file, JavaGenerator.Output out, PrintStream console) {
+        JavaCompiler compiler = findCompiler();
+        if (compiler == null) {
+            console.println("Erro: nenhum compilador Java disponível (instale um JDK, não apenas JRE).");
+            return false;
+        }
+        Path dir = compile(compiler, file, out, console);
+        if (dir == null) return false;
+        deleteQuietly(dir);
+        return true;
+    }
+
     /** Compila e executa; mensagens de erro vão para {@code console}. Retorna o código de saída do programa. */
     public static int run(String file, JavaGenerator.Output out, PrintStream console) {
         JavaCompiler javac = findCompiler();
@@ -59,7 +81,8 @@ public final class JavaRunner {
             throw new ExitSignal(code);
         });
         // URLClassLoader em vez de defineClass: no CheerpJ, defineClass chamado pelo nosso código trava.
-        try (URLClassLoader loader = new URLClassLoader(new URL[] {dir.resolve("classes").toUri().toURL()},
+        try (Batplan.Execution execution=Batplan.beginExecution();
+                URLClassLoader loader = new URLClassLoader(new URL[] {dir.resolve("classes").toUri().toURL()},
                 JavaRunner.class.getClassLoader())) {
             Class<?> program = Class.forName(out.className(), true, loader);
             debug("classe carregada");
@@ -110,6 +133,11 @@ public final class JavaRunner {
      */
     private static Path compile(JavaCompiler javac, String file, JavaGenerator.Output out,
             PrintStream console) {
+        return compile(javac,file,out,console,null);
+    }
+
+    private static Path compile(JavaCompiler javac, String file, JavaGenerator.Output out,
+            PrintStream console, java.util.function.Consumer<SpiderSense.Issue> sink) {
         DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<>();
         StandardJavaFileManager fm = javac.getStandardFileManager(diagnostics, Locale.getDefault(), StandardCharsets.UTF_8);
         // Bytecode Java 17: é o máximo que o CheerpJ executa. O javac usa --release (que também limita a API);
@@ -139,6 +167,17 @@ public final class JavaRunner {
             boolean ok = javac.getTask(compilerLog, fm, diagnostics, options, null,
                     fm.getJavaFileObjects(javaFile.toFile())).call();
             if (!ok) {
+                if(sink!=null) {
+                    boolean reported=false;
+                    for(var diagnostic:diagnostics.getDiagnostics())if(diagnostic.getKind()==Diagnostic.Kind.ERROR) {
+                        int generated=(int)diagnostic.getLineNumber();
+                        int line=generated>=1&&generated<=out.lineMap().length?out.lineMap()[generated-1]:1;
+                        sink.accept(new SpiderSense.Issue("JAVA_ERROR","error",file,Math.max(1,line),1,2,
+                                diagnostic.getMessage(Locale.getDefault())));
+                        reported=true;
+                    }
+                    if(!reported)throw new IllegalStateException("Compilador Java falhou: "+compilerLog);
+                }
                 reportJavaErrors(file, out, diagnostics, console);
                 if (diagnostics.getDiagnostics().isEmpty()) console.print(compilerLog);
                 deleteQuietly(dir);
@@ -146,9 +185,12 @@ public final class JavaRunner {
             }
             return dir;
         } catch (IOException e) {
+            if(sink!=null)throw new IllegalStateException("Falha ao preparar análise",e);
             console.println("Erro ao preparar a compilação: " + e.getMessage());
             deleteQuietly(dir);
             return null;
+        } finally {
+            try { fm.close(); } catch (IOException ignored) { }
         }
     }
 

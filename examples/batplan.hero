@@ -1,0 +1,28 @@
+hero Worker {
+    public int read() {
+        return health;
+    }
+}
+
+battle {
+    summon Worker as original;
+    Worker alias = original;
+    summon Worker as other;
+
+    batplan(original);
+    try {
+        announce alias.read();
+    } catch (HeroError error) {
+        announce "Removed instance: " + error.kind();
+    }
+
+    announce "Other instance: " + other.read();
+    original = new Worker();
+    announce "New instance: " + original.read();
+
+    try {
+        announce alias.read();
+    } catch (HeroError error) {
+        announce "Old alias: " + error.kind();
+    }
+}

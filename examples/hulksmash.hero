@@ -1,0 +1,17 @@
+battle {
+    int rage = 0;
+    hulksmash (rage < 5) {
+        announce "Ignored";
+        if (false) {
+            blackwidow {
+                rage++;
+                announce rage;
+                if (rage == 3) {
+                    hulkbuster;
+                }
+            }
+        }
+        hulkbuster;
+    }
+    announce "Finished";
+}

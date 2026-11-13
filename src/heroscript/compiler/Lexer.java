@@ -47,8 +47,11 @@ public class Lexer {
             return new Token(TokenType.IDENT, src.substring(start, pos), startLine, startCol);
         }
         if (Character.isDigit(c) || (c == '.' && Character.isDigit(peek(1)))) {
+            boolean hex=src.startsWith("0x",pos)||src.startsWith("0X",pos);
             while (pos < src.length() && (Character.isLetterOrDigit(peek(0)) || peek(0) == '_'
-                    || (peek(0) == '.' && Character.isDigit(peek(1))))) {
+                    || (peek(0)=='.'&&!src.startsWith("...",pos))
+                    || ((peek(0)=='+'||peek(0)=='-')&&pos>start
+                        &&(hex?src.charAt(pos-1)=='p'||src.charAt(pos-1)=='P':src.charAt(pos-1)=='e'||src.charAt(pos-1)=='E')))) {
                 advance();
             }
             return new Token(TokenType.NUMBER, src.substring(start, pos), startLine, startCol);
@@ -60,7 +63,10 @@ public class Lexer {
             advance();
             while (pos < src.length() && peek(0) != c) {
                 if (peek(0) == '\n') break;
-                if (peek(0) == '\\') advance();
+                if (peek(0) == '\\') {
+                    advance();
+                    if(pos>=src.length()||peek(0)=='\n')break;
+                }
                 advance();
             }
             if (pos >= src.length() || peek(0) != c) {

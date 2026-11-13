@@ -21,7 +21,7 @@ flowchart LR
 | `heroscript.jar` | compilador + runtime, compilados com `--release 17` |
 | `ecj.jar` | Eclipse Compiler for Java 3.38 — compilador Java escrito em Java, substitui o `javac` |
 | `jdk17-base.jar` | API pública do `java.base` do Java 17, extraída do `ct.sym` do JDK por `scripts/make_jdk_stub.py` |
-| `Playground.java` | ponte com métodos estáticos `run`, `java` e `tokens` que devolvem texto |
+| `Playground.java` | ponte com métodos estáticos `run`, `java`, `tokens` e `diagnostics` que devolvem texto |
 | `playground.js` | inicia o CheerpJ, carrega os jars em modo biblioteca e chama a ponte |
 
 ```js
@@ -55,6 +55,33 @@ const saida = await Playground.run(codigo);
 - **Diagnóstico**: com `heroscript.debug=true` (ligado no playground), o `JavaRunner` mostra as etapas e os tempos no
   console do navegador (F12).
 - **Compartilhar**: o botão gera um link com o código em `#code=...`; `?example=nome` abre um exemplo.
+
+## spiderSense no editor
+
+`Playground.diagnostics` devolve os [diagnósticos](../linguagem/spider-sense.md) em JSON. O `playground.js` o chama
+700 ms depois da última tecla e desenha uma aranha na margem de cada linha com erro (vermelha) ou aviso (amarela).
+
+- **Compila, mas não executa**: a análise passa pelo mesmo caminho do `run` até o ECJ (cerca de 2 s no navegador) e
+  para antes de carregar a classe.
+- **Uma chamada por vez**: a JVM do CheerpJ atende uma chamada de cada vez, e `System.out` e a `Arena` são globais.
+  Por isso a análise nunca roda junto com uma execução. Ela **não desabilita os botões**: se você clicar em
+  Executar durante uma análise, a execução espera a análise terminar.
+- **Resultados antigos são descartados**: cada edição incrementa um contador; uma análise que termina depois de uma
+  nova edição não desenha nada e é reagendada.
+
+## Testando o caminho do navegador
+
+Os testes automáticos usam o `javac`. Para exercitar localmente o compilador do playground:
+
+```bash
+scripts/build_playground.sh
+java -Dheroscript.compiler=ecj -Dheroscript.platform=build/playground/jdk17-base.jar \
+     -cp build/classes:build/vendor/ecj-3.38.0.jar heroscript.compiler.Main run examples/batcave.hero
+```
+
+A saída deve ser igual à de `tests/expected/`, exceto pelo texto dos erros de Java embutido (a mensagem vem do ECJ).
+Isso ainda não testa o CheerpJ: recursos do runtime que dependem da JVM — como o `StackWalker` usado pela
+[batcave](../linguagem/batcave.md) — só são confirmados abrindo o playground no navegador.
 
 ## Montando localmente
 

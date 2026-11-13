@@ -25,34 +25,42 @@ public abstract class Squad {
     }
 
     protected void allowMember(String heroType) {
+        Batplan.active(this);
         allowedTypes.add(heroType);
     }
 
     protected void defineCombo(String n, int cost, int damage, int requires) {
+        Batplan.active(this);
         combos.put(n, new Combo(n, cost, damage, Math.max(1, requires)));
     }
 
     public List<Hero> members() {
-        return List.copyOf(members);
+        Batplan.active(this);
+        return members.stream().filter(Batplan::isActive).toList();
     }
 
     public void recruit(Hero hero) {
+        Batplan.active(this);
+        Batplan.active(hero);
         String type = hero.getClass().getSimpleName();
         if (!allowedTypes.isEmpty() && !allowedTypes.contains(type)) {
             throw new HeroError("NotASquadMember", hero.name + " (" + type + ") não pode entrar em " + name
                     + "; membros aceitos: " + String.join(", ", allowedTypes));
         }
         if (!members.contains(hero)) members.add(hero);
-        Arena.log("squad", hero.name + " entra em " + name + " (" + members.size() + " membro(s))");
+        Arena.log("squad", hero.name + " entra em " + name + " (" + members().size() + " membro(s))");
     }
 
     public void assemble(String comboName, Fighter target) {
+        Batplan.active(this);
+        Batplan.active(target);
         Combo c = combos.get(comboName);
         if (c == null) throw new HeroError("ComboNotFound", name + " não possui o combo " + comboName);
+        if(target instanceof Hero)throw new HeroError("FriendlyFire",name+" não pode atacar o herói "+target.name);
         int share = (c.cost() + c.requires() - 1) / c.requires();
         List<Hero> ready = new ArrayList<>();
         for (Hero h : members) {
-            if (!h.isDefeated() && h.energy >= share) ready.add(h);
+            if (Batplan.isActive(h) && !h.isDefeated() && h.energy >= share) ready.add(h);
         }
         if (ready.size() < c.requires()) {
             throw new HeroError("SquadUnavailable", comboName + " precisa de " + c.requires() + " membro(s) com "
@@ -71,6 +79,7 @@ public abstract class Squad {
 
     @Override
     public String toString() {
+        Batplan.active(this);
         return name;
     }
 }

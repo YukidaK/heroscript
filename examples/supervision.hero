@@ -1,0 +1,18 @@
+hero Worker {
+    public int doubleValue(int input) {
+        int result = input * 2;
+        return result;
+    }
+
+    public void inspect() {
+        supervision.getMethod(doubleValue);
+    }
+}
+
+battle {
+    int count = 3;
+    supervision.getValue(count);
+    summon Worker as worker;
+    worker.inspect();
+    announce "Program continues";
+}

@@ -38,8 +38,10 @@ O script `./heroscript` compila sozinho na primeira execução, então este pass
 |---|---|
 | `./heroscript run arquivo.hero` | transpila, compila e executa |
 | `./heroscript build arquivo.hero [-o pasta]` | grava o Java gerado (padrão: `build/gen/`) |
-| `./heroscript check arquivo.hero` | só valida léxico, sintaxe e semântica |
+| `./heroscript check arquivo.hero` | valida léxico, sintaxe, semântica e o Java embutido, sem executar |
 | `./heroscript tokens arquivo.hero` | mostra os tokens produzidos pelo lexer |
+| `./heroscript spiderSense arquivo.hero` | [diagnósticos](linguagem/spider-sense.md) em JSON, sem executar |
+| `./heroscript batinvestigate pasta-ou-arquivo símbolo` | [localiza](linguagem/batinvestigate.md) onde um símbolo foi declarado |
 
 O código de saída é `0` em caso de sucesso e `1` em erro de compilação ou `HeroError` não tratado.
 

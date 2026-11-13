@@ -11,13 +11,13 @@
   CodeMirror.defineMIME("text/x-heroscript", {
     name: "clike",
     keywords: words(
-      "hero villain power gadget form secret allow mission squad members combo battle " +
+      "hero villain power gadget form secret allow mission squad members combo battle batcave kryptonite supervision flashPoint flashtravel deadpoolAction batplan hulksmash blackwidow hulkbuster " +
       "unleash on transform revert evolve by summon as recruit into assemble announce " +
       "if else for while do switch case default break continue return try catch finally throw new this " +
       "true false null"
     ),
     types: words("int long double float boolean char String void var Fighter Hero Villain Squad HeroError"),
-    builtin: words("shield recharge status isDefeated maxEnergy maxHealth members kind"),
+    builtin: words("shield recharge status isDefeated maxEnergy maxHealth members kind getValue getMethod"),
     atoms: words("true false null"),
   });
 
@@ -25,6 +25,7 @@
     mode: "text/x-heroscript",
     theme: matchMedia("(prefers-color-scheme: dark)").matches ? "material-darker" : "default",
     lineNumbers: true,
+    gutters: ["CodeMirror-linenumbers", "spiderSense"],
     indentUnit: 4,
     matchBrackets: true,
     autoCloseBrackets: true,
@@ -39,6 +40,75 @@
   let examples = {};
   let busy = false;
   let timer = null;
+  let diagnosticTimer = null;
+  let revision = 0;
+  let analysis = null; // promessa da análise em curso; a JVM atende uma chamada por vez
+  const diagnosticPanel = document.createElement("div");
+  diagnosticPanel.setAttribute("aria-live", "polite");
+  diagnosticPanel.style.cssText = "padding:8px;max-height:160px;overflow:auto;font-size:13px";
+  editor.getWrapperElement().after(diagnosticPanel);
+
+  function scheduleDiagnostics() {
+    clearTimeout(diagnosticTimer);
+    diagnosticTimer = setTimeout(analyzeEditor, 700);
+  }
+
+  editor.on("change", () => {
+    revision++;
+    editor.clearGutter("spiderSense");
+    diagnosticPanel.textContent = "spiderSense: análise pendente…";
+    scheduleDiagnostics();
+  });
+
+  // A análise roda em segundo plano: não desabilita os botões nem mexe na barra de status. Se o usuário
+  // executar durante a análise, action() espera ela terminar em vez de ignorar o clique.
+  async function analyzeEditor() {
+    if (!playground || busy || analysis) { scheduleDiagnostics(); return; }
+    const version = revision;
+    analysis = runAnalysis(version, editor.getValue());
+    try {
+      await analysis;
+    } finally {
+      analysis = null;
+      if (version !== revision) scheduleDiagnostics();
+    }
+  }
+
+  async function runAnalysis(version, source) {
+    diagnosticPanel.textContent = "spiderSense: analisando…";
+    try {
+      const issues = JSON.parse(String(await playground.diagnostics(source)));
+      if (version !== revision) return;
+      editor.clearGutter("spiderSense");
+      diagnosticPanel.replaceChildren();
+      const byLine = new Map();
+      for (const issue of issues) {
+        const label = issue.severity === "error" ? "Erro" : "Aviso";
+        const color = issue.severity === "error" ? "#e53935" : "#b88600";
+        const description = `${label} — linha ${issue.line}: ${issue.message}`;
+        const row = document.createElement("button");
+        row.type = "button";
+        row.textContent = `🕷 ${description}`;
+        row.style.cssText = `display:block;text-align:left;color:${color};background:transparent;border:0;cursor:pointer`;
+        row.onclick = () => { editor.focus(); editor.setCursor(issue.line - 1, issue.column - 1); };
+        diagnosticPanel.append(row);
+        if (!byLine.has(issue.line)) byLine.set(issue.line, []);
+        byLine.get(issue.line).push({ issue, description });
+      }
+      for (const [line, entries] of byLine) {
+        const marker = document.createElement("span");
+        marker.style.cssText = `color:${entries.some(e => e.issue.severity === "error") ? "#e53935" : "#b88600"};display:block;width:18px;cursor:help`;
+        marker.title = entries.map(e => e.description).join("\n");
+        marker.setAttribute("role", "img");
+        marker.setAttribute("aria-label", marker.title);
+        marker.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><g fill="currentColor" stroke="currentColor" stroke-width="1.6"><ellipse cx="12" cy="14" rx="4" ry="5"/><circle cx="12" cy="7" r="2"/><path fill="none" d="M9 10L4 6 2 2M8 12L3 10 1 7M8 15L3 16 1 20M9 17L6 20 6 23M15 10L20 6 22 2M16 12L21 10 23 7M16 15L21 16 23 20M15 17L18 20 18 23"/></g></svg>';
+        editor.setGutterMarker(line - 1, "spiderSense", marker);
+      }
+      if (!issues.length) diagnosticPanel.textContent = "spiderSense: nenhum problema estático encontrado.";
+    } catch (error) {
+      if (version === revision) diagnosticPanel.textContent = `spiderSense indisponível: ${error}`;
+    }
+  }
 
   // Programa mínimo compilado ao abrir a página: a primeira compilação no navegador é lenta (~40 s) porque o
   // compilador Java ainda está sendo otimizado pela JVM; depois dela cada execução leva poucos segundos.
@@ -92,8 +162,9 @@
     const titles = { run: "Saída", java: "Java gerado", tokens: "Tokens" };
     setBusy(true, kind === "run" ? "Compilando e executando…" : "Processando…");
     $("output-title").textContent = titles[kind];
-    const started = performance.now();
     try {
+      if (analysis) await analysis;
+      const started = performance.now();
       const result = await playground[kind](editor.getValue());
       render(String(result), kind === "run");
       $("timing").textContent = `${Math.round(performance.now() - started)} ms`;
@@ -101,6 +172,8 @@
     } catch (e) {
       render(`Erro no playground: ${e}`, true);
       setBusy(false, "Falhou — veja a saída.");
+    } finally {
+      scheduleDiagnostics();
     }
   }
 
@@ -184,6 +257,7 @@
       await playground.run(WARMUP);
       setBusy(false, `Pronto em ${((performance.now() - started) / 1000).toFixed(0)} s. Ctrl+Enter executa.`);
       render("Clique em ▶ Executar (ou Ctrl+Enter).", false);
+      scheduleDiagnostics();
     } catch (e) {
       setBusy(false, "Não foi possível iniciar a JVM no navegador.");
       render(`Falha ao iniciar o CheerpJ: ${e}`, true);

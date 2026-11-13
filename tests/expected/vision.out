@@ -1,0 +1,6 @@
+[supervision] vision.hero:2 reserve = [protegido]
+[supervision] vision.hero:2 reserve = [protegido]
+[supervision] vision.hero:3 visible = 7
+[supervision] vision.hero:8 message = Olá
+>> Cálculo correto
+[exit 0]

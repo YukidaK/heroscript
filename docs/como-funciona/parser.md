@@ -14,6 +14,10 @@ public record Raw(List<Token> tokens, Block body) implements Stmt {}  // código
 
 Os nós guardam `Token`s (não só `String`s) para sempre saber linha e coluna.
 
+A expansão acrescentou `BatcaveDecl` e `CaveMethod` (batcaves e métodos Java tipados) e novos `Stmt`: `SecretLocal`,
+`Kryptonite`, `ValueObservation`, `MethodObservation`, `Batplan`, `DeadpoolAction`, `FlashPoint`, `FlashTravel`,
+`HulkSmash`, `BlackWidow` e `HulkBuster`. A lista completa está em `Ast.java`.
+
 ## Parser descendente recursivo
 
 Cada regra da [gramática](../linguagem/referencia.md#gramatica-ebnf) vira um método: `parseCharacter`,

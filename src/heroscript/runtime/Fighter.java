@@ -30,14 +30,17 @@ public abstract class Fighter {
     // ------------------------------------------------------------ montagem (usada pelo código gerado)
 
     protected void definePower(String n, int cost, int damage, int cooldown) {
+        Batplan.active(this);
         powers.put(n, new Power(n, cost, damage, cooldown));
     }
 
     protected void defineGadget(String n, int defense, int uses) {
+        Batplan.active(this);
         gadgets.put(n, new Gadget(n, defense, uses));
     }
 
     protected Form defineForm(String n) {
+        Batplan.active(this);
         Form f = new Form(n);
         forms.put(n, f);
         return f;
@@ -45,6 +48,7 @@ public abstract class Fighter {
 
     /** Chamado ao fim do construtor: os valores iniciais viram os máximos. */
     protected void ready() {
+        Batplan.active(this);
         maxEnergy = energy;
         maxHealth = health;
     }
@@ -52,35 +56,45 @@ public abstract class Fighter {
     // ------------------------------------------------------------ consultas
 
     public boolean isDefeated() {
+        Batplan.active(this);
         return health <= 0;
     }
 
     public int maxEnergy() {
+        Batplan.active(this);
         return maxEnergy;
     }
 
     public int maxHealth() {
+        Batplan.active(this);
         return maxHealth;
     }
 
     public String form() {
+        Batplan.active(this);
+        Batplan.active(activeForm);
         return activeForm == null ? "normal" : activeForm.name;
     }
 
     public String status() {
+        Batplan.active(this);
         return name + " [HP " + health + "/" + maxHealth + " | EN " + energy + "/" + maxEnergy + " | forma " + form() + "]";
     }
 
     @Override
     public String toString() {
+        Batplan.active(this);
         return name;
     }
 
     // ------------------------------------------------------------ unleash
 
     public void unleash(String powerName, Fighter target) {
+        Batplan.active(this);
+        Batplan.active(target);
         requireAlive();
         Power p = powers.get(powerName);
+        Batplan.active(p);
         if (p == null) throw new HeroError("PowerNotFound", name + " não possui o poder " + powerName);
         if (target != null && target != this && this instanceof Hero && target instanceof Hero) {
             throw new HeroError("FriendlyFire", name + " não pode atacar o herói " + target.name);
@@ -103,6 +117,7 @@ public abstract class Fighter {
 
     /** Recebe dano já descontando a defesa do escudo ativo e da forma. O escudo absorve um único golpe. */
     public void receive(int damage, String source) {
+        Batplan.active(this);
         int defense = activeForm == null ? shieldDefense : activeForm.apply("defense", shieldDefense);
         int taken = Math.max(0, damage - Math.max(0, defense));
         boolean wasStanding = !isDefeated();
@@ -116,9 +131,11 @@ public abstract class Fighter {
     /** Fim de uma ação: avança recargas e o tempo da forma ativa. */
     private void endAction(Power used) {
         for (Power p : powers.values()) {
+            if(!Batplan.isActive(p))continue;
             if (p.cooldownLeft > 0) p.cooldownLeft--;
         }
         used.cooldownLeft = used.cooldown;
+        Batplan.active(activeForm);
         if (activeForm != null && formActionsLeft > 0 && --formActionsLeft == 0) {
             Arena.log("transform", "a forma " + activeForm.name + " de " + name + " expirou");
             revert();
@@ -128,8 +145,10 @@ public abstract class Fighter {
     // ------------------------------------------------------------ gadgets, energia e evolução
 
     public void shield(String gadgetName) {
+        Batplan.active(this);
         requireAlive();
         Gadget g = gadgets.get(gadgetName);
+        Batplan.active(g);
         if (g == null) throw new HeroError("GadgetNotFound", name + " não possui o gadget " + gadgetName);
         if (g.usesLeft == 0) throw new HeroError("GadgetUnavailable", gadgetName + " de " + name + " não tem mais usos");
         if (g.usesLeft > 0) g.usesLeft--;
@@ -139,6 +158,7 @@ public abstract class Fighter {
     }
 
     public void recharge(int amount) {
+        Batplan.active(this);
         requireAlive();
         int before = energy;
         energy = Math.min(Math.max(maxEnergy, energy), energy + amount);
@@ -146,7 +166,9 @@ public abstract class Fighter {
     }
 
     public void evolve(String powerName, int amount) {
+        Batplan.active(this);
         Power p = powers.get(powerName);
+        Batplan.active(p);
         if (p == null) throw new HeroError("PowerNotFound", name + " não possui o poder " + powerName);
         p.damage += amount;
         Arena.log("evolve", powerName + " de " + name + " agora causa " + p.damage + " de dano");
@@ -155,8 +177,10 @@ public abstract class Fighter {
     // ------------------------------------------------------------ transformações
 
     public void transform(String formName) {
+        Batplan.active(this);
         requireAlive();
         Form f = forms.get(formName);
+        Batplan.active(f);
         if (f == null) throw new HeroError("FormNotFound", name + " não possui a forma " + formName);
         if (f.usesLeft == 0) {
             throw new HeroError("TransformationExpired", "a forma " + formName + " de " + name + " já foi esgotada");
@@ -173,7 +197,9 @@ public abstract class Fighter {
 
     /** Volta à forma normal. Energia e vida acima do máximo são cortadas. */
     public void revert() {
+        Batplan.active(this);
         if (activeForm == null) return;
+        Batplan.active(activeForm);
         String old = activeForm.name;
         activeForm = null;
         energy = Math.min(energy, maxEnergy);
@@ -185,6 +211,7 @@ public abstract class Fighter {
 
     /** Leitura de um secret só é permitida dentro das missões deste personagem listadas em {@code allow}. */
     protected void checkSecret(String secret, String... allowedMissions) {
+        Batplan.active(this);
         if (!Arena.inMissionOf(this, allowedMissions)) {
             String where = allowedMissions.length == 0 ? "nenhuma missão" : String.join(", ", allowedMissions);
             throw new HeroError("SecretAccessDenied", "o secret " + secret + " de " + name + " só pode ser lido em "

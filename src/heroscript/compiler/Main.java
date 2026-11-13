@@ -21,6 +21,10 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) {
+        if (args.length > 0 && args[0].equals("batinvestigate")) {
+            System.exit(Investigator.command(args, System.out));
+            return;
+        }
         if (args.length < 2) {
             usage();
             System.exit(2);
@@ -33,10 +37,16 @@ public class Main {
                 case "run" -> System.exit(JavaRunner.run(file, transpile(read(source), file), System.out));
                 case "build" -> build(source, args.length >= 4 && args[2].equals("-o") ? Paths.get(args[3]) : genDir());
                 case "check" -> {
-                    transpile(read(source), file);
+                    var output = transpile(read(source), file);
+                    if (!JavaRunner.validate(file, output, System.out)) System.exit(1);
                     System.out.println("OK: " + source + " é um programa HeroScript válido");
                 }
                 case "tokens" -> new Lexer(read(source), file).tokenize().forEach(System.out::println);
+                case "spiderSense" -> {
+                    var issues=SpiderSense.analyze(read(source),file);
+                    System.out.println(SpiderSense.json(issues));
+                    if(issues.stream().anyMatch(i->i.severity().equals("error")))System.exit(1);
+                }
                 default -> {
                     usage();
                     System.exit(2);
@@ -57,7 +67,9 @@ public class Main {
                   run     transpila, compila e executa o programa
                   build   grava o código Java gerado (opcional: -o pasta)
                   check   apenas valida o programa
-                  tokens  mostra os tokens produzidos pelo lexer""");
+                  tokens  mostra os tokens produzidos pelo lexer
+                  spiderSense  analisa sem executar e retorna diagnósticos JSON
+                  batinvestigate diretorio-ou-arquivo.hero simbolo  lista origens não secret""");
     }
 
     /** Pipeline completo: texto → tokens → AST → Java. */

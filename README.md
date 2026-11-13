@@ -89,6 +89,111 @@ tests/run_tests.sh            # compara a saída de cada exemplo com tests/expec
 tests/run_tests.sh --update   # regrava as saídas esperadas (revise o diff!)
 ```
 
+No Windows, também é possível executar os testes diretamente pelo PowerShell:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File tests/run_tests.ps1
+java -cp build/classes heroscript.compiler.Main check examples/vision.hero
+java -cp build/classes heroscript.compiler.Main run examples/vision.hero
+```
+
+O exemplo `vision.hero` usa `supervision.getValue(variavel);` para observar valores e
+`kryptonite int variavel = valor;` para mascarar uma variável local como
+`[protegido]`. A marcação não se propaga para cópias; `announce` continua
+imprimindo explicitamente os valores. `supervision` aceita tipos primitivos e
+`String` com tipo explícito. Campos `secret` preservam suas permissões de missão
+e têm valores mascarados nas observações autorizadas. `secret` e `kryptonite`
+não podem ser combinados.
+
+`supervision` substitui o antigo `smanvision`. `getValue` mostra o valor atual
+e a linha da declaração. `supervision.getMethod(doubleValue);`, escrito dentro
+de Worker, descreve a estrutura permitida de um método da própria classe sem executá-lo. Sobrecargas
+podem ser selecionadas com `supervision.getMethod("Worker.doubleValue(int)");`.
+Referências protegidas são omitidas, com indicação de análise parcial. Métodos
+secret e implementações de batcave não são exibidos. getMethod em battle ou
+apontando para outra classe retorna indisponível. getValue observa apenas
+locais, parâmetros e campos acessíveis no escopo atual, sem acesso por ponto.
+Veja `examples/supervision.hero`
+e a [referência de Supervision](docs/linguagem/supervision.md).
+
+`batcave Nome { ... }` declara uma classe com campos e métodos privados por
+padrão. Métodos `public` podem ser chamados em instâncias criadas com `new Nome()`.
+Durante sua execução, incluindo chamadas síncronas a código externo,
+observações de `supervision` são suprimidas. `announce` continua funcionando.
+Declarações de `villain` dentro dela são proibidas. Construção, chamadas e acesso
+a campos por uma cadeia síncrona que contenha vilão geram `BatcaveAccessDenied`,
+inclusive por intermediários. Veja as [regras da batcave](docs/linguagem/batcave.md).
+
+```powershell
+java -cp build/classes heroscript.compiler.Main run examples/batcave.hero
+```
+
+O exemplo mostra autenticação, estado independente por instância e retomada das
+observações após uma exceção. Nesta etapa, campos são de instância, uma declaração
+por instrução; construtores explícitos e campos `kryptonite` dentro de batcave
+não são suportados. Campos `secret` e variáveis locais `secret`/`kryptonite`
+em seus métodos são permitidos.
+
+`secret` agora também pode marcar campos e métodos de batcave, métodos tipados
+e missões de personagens e variáveis locais. Por exemplo:
+
+```hero
+secret int ticket = 123;
+supervision.getValue(ticket); // [protegido]
+```
+
+Em métodos, use `secret public int calculate(int input) { ... }` ou
+`secret boolean validate(String input) { ... }`. A visibilidade é independente
+da marcação; campos e métodos de batcave são privados por padrão. `allow` continua
+exclusivo dos campos secret antigos de personagens. Métodos secret suprimem
+observações durante sua execução; a própria batcave não pode receber secret.
+O `batinvestigate` filtra essas declarações, inclusive dentro de batcaves.
+Veja `examples/secret_members.hero`.
+
+Para localizar declarações sem executar o programa:
+
+```powershell
+java -cp build/classes heroscript.compiler.Main batinvestigate examples authenticate
+java -cp build/classes heroscript.compiler.Main batinvestigate examples reserve
+java -cp build/classes heroscript.compiler.Main batinvestigate examples/secret_members.hero Vault
+```
+
+O comando único pesquisa `.hero` recursivamente e lista todas as origens visíveis:
+categoria, nome e arquivo:linha:coluna. Não mostra corpos, inicializadores,
+valores ou assinaturas detalhadas. Homônimos, sobrecargas e declarações duplicadas
+são listados separadamente, inclusive em arquivos diferentes. Campos, locais,
+métodos e missões `secret` continuam ocultos, inclusive dentro de batcaves.
+Locais `kryptonite` e locais Java comuns são indexados, incluindo múltiplas declarações,
+`var`, arrays e variáveis de loops/catch. Parâmetros de métodos ainda não são indexados.
+Não é preciso compilar o programa para investigar. Falhas de leitura ou sintaxe
+preservam os demais resultados e indicam busca parcial com código 2.
+Os subcomandos `find`, `inspect` e `trace` foram retirados.
+
+O comando `check` agora também compila o Java gerado para validar tipos e escopos,
+sem executar o programa. A suíte inclui testes específicos dos novos recursos.
+
+`flashPoint { ... }` delimita saltos com `flashtravel N;`, onde N é uma linha física
+do próprio arquivo. O destino precisa iniciar uma instrução da mesma região.
+É possível sair e voltar a loops preservando o estado; um flashPoint de topo pode
+envolver battle para permitir também sair e reentrar nele. Não há timeline.
+Editar linhas exige atualizar os números. Veja a [referência de Flashtravel](docs/linguagem/flashtravel.md)
+para as construções suportadas e os limites da primeira versão.
+
+```powershell
+java -cp build/classes heroscript.compiler.Main run examples/flashtravel.hero
+```
+
+`deadpoolAction(chance = 50) { ... }` sorteia a execução de um bloco a cada entrada,
+sem seed. Chance é um inteiro literal de 0 a 100; 0 nunca executa e 100 sempre
+executa. Exceções do corpo executado continuam se propagando normalmente.
+Flashtravel não é permitido dentro do bloco nem pode apontar para seu interior;
+saltar para a linha de abertura executa o sorteio novamente.
+Veja a [referência de deadpoolAction](docs/linguagem/deadpool-action.md).
+
+```powershell
+java -cp build/classes heroscript.compiler.Main run examples/deadpool_action.hero
+```
+
 ### 5. Documentação (MkDocs + uv)
 
 A documentação fica em `docs/` e usa [MkDocs Material](https://squidfunk.github.io/mkdocs-material/), com as
@@ -201,6 +306,46 @@ Em tempo de execução (`HeroError`, podem ser tratados com `catch (HeroError e)
 | `examples/squad.hero` | três heróis diferentes, squad, combos e `SquadUnavailable` |
 | `examples/secret.hero` | controle de acesso de `secret` por missão |
 | `examples/errors.hero` | cada `HeroError` sendo disparado e tratado |
+| `examples/batcave.hero` | `batcave` com membros privados e sem observação interna |
+| `examples/secret_members.hero` | `secret` em campos, métodos e variáveis locais |
+| `examples/vision.hero` | `supervision.getValue` e variáveis `kryptonite` |
+| `examples/supervision.hero` | `supervision.getValue` e `supervision.getMethod` |
+| `examples/flashtravel.hero` | `flashPoint` e saltos com `flashtravel` |
+| `examples/deadpool_action.hero` | blocos sorteados com `deadpoolAction` |
+| `examples/batplan.hero` | desativação de objetos e aliases com `batplan` |
+| `examples/hulksmash.hero` | `hulksmash`, `blackwidow` e `hulkbuster` |
+
+## Batplan
+
+`batplan(objeto);` desativa uma instância e seus aliases nas operações verificadas da HeroScript. Outros objetos continuam ativos. Listas conservam suas entradas; `new` ou `summon` criam outra instância, e `flashtravel` não reativa a anterior.
+
+```bash
+./heroscript check examples/batplan.hero
+./heroscript run examples/batplan.hero
+```
+
+O recurso não força liberação de memória nem altera o funcionamento interno de bibliotecas Java externas. Veja o [contrato e os limites de batplan](docs/linguagem/batplan.md).
+
+## Hulksmash
+
+`hulksmash (condição) { ... }` repete executando somente as regiões `blackwidow` do seu corpo. Controles fora delas são ignorados. `hulkbuster;`, quando alcançado dentro de `blackwidow`, encerra o hulksmash mais próximo.
+
+```bash
+./heroscript check examples/hulksmash.hero
+./heroscript run examples/hulksmash.hero
+```
+
+Veja as [regras de execução e escopo](docs/linguagem/hulksmash.md). Os avisos do spiderSense não impedem compilar um loop sem blackwidow ou um hulkbuster ignorado.
+
+## SpiderSense
+
+O playground analisa durante a edição e mostra aranhas vermelhas para erros e amarelas para avisos. A análise usa o compilador existente sem executar o programa. No terminal:
+
+```bash
+./heroscript spiderSense examples/hulksmash.hero
+```
+
+Veja a [cobertura e os diagnósticos JSON](docs/linguagem/spider-sense.md).
 
 ## Estrutura do projeto
 
