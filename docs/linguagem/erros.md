@@ -23,6 +23,7 @@ Detectados antes de executar, sempre com arquivo, linha e coluna.
 | `PowerNotFound` | poder inexistente no personagem |
 | `PowerOnCooldown` | poder usado antes de recarregar |
 | `FriendlyFire` | herói tentando atacar outro herói |
+| `BatcaveAccessDenied` | acesso a batcave a partir de uma cadeia de chamadas com vilão |
 | `GadgetNotFound` | gadget inexistente |
 | `GadgetUnavailable` | gadget sem usos restantes |
 | `FormNotFound` | forma inexistente |

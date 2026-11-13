@@ -1,0 +1,8 @@
+[supervision] supervision.hero:13 count = 3
+[supervision.getMethod] Worker.doubleValue(int) | supervision.hero:2
+public int doubleValue(int input) {
+    int result = input * 2 ;
+    return result ;
+}
+>> Program continues
+[exit 0]

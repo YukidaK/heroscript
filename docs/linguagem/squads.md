@@ -28,6 +28,7 @@ assemble league.JusticeStorm on overlord;
 - Participam os primeiros `requires` membros **vivos e com energia para sua parte**; se não houver membros
   suficientes → `SquadUnavailable`.
 - Combo inexistente → `ComboNotFound`.
+- Combo contra um herói → `FriendlyFire`, antes de descontar energia ou aplicar dano. Combos sem alvo ou contra vilões continuam permitidos.
 
 `league.members()` devolve a lista de heróis (útil em `for (Hero h : league.members())`).
 

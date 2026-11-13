@@ -26,3 +26,45 @@ hero NightOwl {
 - `allow` citando uma missão que não existe é erro de compilação.
 
 Veja o exemplo [Identidade secreta](../exemplos/secret.md).
+
+## Variáveis locais e métodos
+
+Além da regra de campos de personagens acima, `secret` pode marcar variáveis
+locais, campos de batcave, métodos tipados de personagens e batcaves e missões:
+
+```java
+batcave Vault {
+    secret String code = "EXEMPLO";
+
+    secret boolean validate(String input) {
+        return code.equals(input);
+    }
+
+    public boolean authenticate(String input) {
+        return validate(input);
+    }
+}
+
+battle {
+    secret int ticket = 123;
+    supervision.getValue(ticket); // [protegido]
+    announce new Vault().authenticate("EXEMPLO");
+}
+```
+
+Locais exigem tipo explícito e inicializador; `final` é opcional. Para métodos,
+escreva `secret` antes de `public`, `private` ou `static`. Métodos secret e
+`secret mission` suprimem eventos de supervision.getValue(durante a execução, inclusive
+chamadas síncronas, restaurando a observação ao sair. `announce` e logs existentes
+continuam funcionando. Retornos e cópias não herdam a marcação.
+
+O `allow` permanece exclusivo dos campos de personagens); não é exigido para
+campos de batcave, métodos ou variáveis locais. A regra de somente leitura
+descrita acima é dos campos antigos; novos locais e campos de batcave podem
+ser alterados normalmente, salvo se declarados `final`.
+
+Não se pode combinar `secret` com `kryptonite`, nem marcar a própria batcave.
+O [batinvestigate](batinvestigate.md) omite esses símbolos, inclusive dentro
+de batcaves, e não percorre o corpo de métodos ou missões secret. Nome secret e
+nome inexistente retornam a mesma resposta genérica. O comando único localiza
+origens e não exibe implementações.

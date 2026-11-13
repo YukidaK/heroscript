@@ -113,6 +113,7 @@ button:not(:disabled):hover, .docs:hover, select:hover { border-color: var(--acc
 }
 
 .editor-pane .CodeMirror { flex: 1; height: auto; font: 13px/1.5 ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace; }
+.spiderSense { width: 20px; }
 
 #output {
   flex: 1;

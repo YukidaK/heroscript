@@ -1,0 +1,18 @@
+flashPoint {
+    int visits = 0;
+    battle {
+        while (visits < 2) {
+            visits++;
+            if (visits == 1) {
+                flashtravel 14;
+            }
+            announce visits;
+        }
+        flashtravel 17;
+    }
+
+    announce "Outside battle";
+    flashtravel 5;
+
+    announce "Finished";
+}

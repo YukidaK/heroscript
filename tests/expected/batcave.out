@@ -1,0 +1,7 @@
+>> Acesso autorizado: true
+>> Acesso incorreto: false
+>> Tentativas na primeira: 2
+>> Tentativas na segunda: 0
+>> Falha tratada fora da batcave
+[supervision] batcave.hero:40 visible = 7
+[exit 0]

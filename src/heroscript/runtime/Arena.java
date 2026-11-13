@@ -43,8 +43,18 @@ public final class Arena {
     }
 
     public static void announce(Object message) {
+        Batplan.active(message);
         System.out.println(">> " + message);
     }
+
+    public static void announce(boolean value) { System.out.println(">> " + value); }
+    public static void announce(byte value) { System.out.println(">> " + value); }
+    public static void announce(short value) { System.out.println(">> " + value); }
+    public static void announce(int value) { System.out.println(">> " + value); }
+    public static void announce(long value) { System.out.println(">> " + value); }
+    public static void announce(float value) { System.out.println(">> " + value); }
+    public static void announce(double value) { System.out.println(">> " + value); }
+    public static void announce(char value) { System.out.println(">> " + value); }
 
     /** Chamado pelo battle quando um HeroError não é tratado: mostra o erro e encerra com código 1. */
     public static void fail(HeroError e) {

@@ -1,0 +1,13 @@
+battle {
+    kryptonite int reserve = 42;
+    int visible = 7;
+    supervision.getValue(reserve);
+    reserve += 8;
+    supervision.getValue(reserve);
+    supervision.getValue(visible);
+    String message = "Olá";
+    supervision.getValue(message);
+    if (reserve == 50) {
+        announce "Cálculo correto";
+    }
+}

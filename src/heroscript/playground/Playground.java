@@ -18,6 +18,10 @@ public final class Playground {
 
     private Playground() {}
 
+    public static String diagnostics(String source) {
+        return heroscript.compiler.SpiderSense.json(heroscript.compiler.SpiderSense.analyze(source,FILE));
+    }
+
     /** Executa o programa e devolve tudo que ele imprimiu, terminando com {@code [exit N]}. */
     public static String run(String source) {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();

@@ -1,0 +1,14 @@
+battle {
+    int actions = 0;
+
+    deadpoolAction(chance = 0) {
+        announce "This line never runs";
+    }
+
+    deadpoolAction(chance = 100) {
+        actions++;
+        announce "Today I decided to work!";
+    }
+
+    announce "Completed actions: " + actions;
+}

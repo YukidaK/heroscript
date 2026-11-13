@@ -21,18 +21,21 @@ public class Form {
     }
 
     public Form set(String setting, int value) {
+        Batplan.active(this);
         if (setting.equals("duration")) duration = value;
         else if (setting.equals("uses")) usesLeft = value;
         return this;
     }
 
     public Form modify(String stat, String op, int value) {
+        Batplan.active(this);
         modifiers.add(new Modifier(stat, op, value));
         return this;
     }
 
     /** Aplica, em ordem, todos os modificadores de {@code stat} sobre o valor base. */
     int apply(String stat, int base) {
+        Batplan.active(this);
         int v = base;
         for (Modifier m : modifiers) {
             if (!m.stat().equals(stat)) continue;

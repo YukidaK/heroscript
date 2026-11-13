@@ -30,4 +30,17 @@ done
 [ "$update" = 1 ] && exit 0
 echo
 echo "$pass ok, $fail falha(s)"
-[ "$fail" = 0 ]
+[ "$fail" = 0 ] || exit 1
+java -Dfile.encoding=UTF-8 -cp "$ROOT/build/classes" "$ROOT/tests/FeatureTests.java" || exit 1
+java -Dfile.encoding=UTF-8 -cp "$ROOT/build/classes" "$ROOT/tests/InvestigatorTests.java" || exit 1
+java -Dfile.encoding=UTF-8 -cp "$ROOT/build/classes" "$ROOT/tests/SupervisionTests.java" || exit 1
+java -Dfile.encoding=UTF-8 -cp "$ROOT/build/classes" "$ROOT/tests/FlashTravelTests.java" || exit 1
+java -Dfile.encoding=UTF-8 -cp "$ROOT/build/classes" "$ROOT/tests/DeadpoolActionTests.java" || exit 1
+java -Dfile.encoding=UTF-8 -cp "$ROOT/build/classes" "$ROOT/tests/BatplanTests.java" || exit 1
+java -Dfile.encoding=UTF-8 -cp "$ROOT/build/classes" "$ROOT/tests/HulkSmashTests.java" || exit 1
+java -Dfile.encoding=UTF-8 -cp "$ROOT/build/classes" "$ROOT/tests/SpiderSenseTests.java" || exit 1
+java -Dfile.encoding=UTF-8 -cp "$ROOT/build/classes" "$ROOT/tests/ValidationTests.java" || exit 1
+java -Dfile.encoding=UTF-8 -cp "$ROOT/build/classes" "$ROOT/tests/RevisionFixTests.java" || exit 1
+if command -v node >/dev/null 2>&1; then
+    (cd "$ROOT" && node tests/spiderSense-editor.mjs) || exit 1
+fi

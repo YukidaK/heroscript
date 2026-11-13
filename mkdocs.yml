@@ -79,9 +79,17 @@ nav:
       - Gadgets e shield: linguagem/gadgets.md
       - Formas e transform: linguagem/formas.md
       - Secret: linguagem/secret.md
+      - Batcave: linguagem/batcave.md
+      - Supervision: linguagem/supervision.md
+      - Batinvestigate: linguagem/batinvestigate.md
       - Missões: linguagem/missoes.md
       - Squads e combos: linguagem/squads.md
       - Battle: linguagem/battle.md
+      - Flashtravel: linguagem/flashtravel.md
+      - Deadpool action: linguagem/deadpool-action.md
+      - Batplan: linguagem/batplan.md
+      - Hulksmash: linguagem/hulksmash.md
+      - SpiderSense: linguagem/spider-sense.md
       - Java embutido: linguagem/java-embutido.md
       - Erros: linguagem/erros.md
       - Referência rápida: linguagem/referencia.md
