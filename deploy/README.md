@@ -15,10 +15,12 @@ Quem aplica é o workflow [`.github/workflows/deploy.yml`](../.github/workflows/
 
 | Arquivo | O que faz |
 |---|---|
-| `Dockerfile`, `nginx.conf` | nginx servindo `site/`, com `Cache-Control: no-cache` e Range requests (exigidas pelo CheerpJ) |
-| `docker-compose.yml` | site + `cloudflared`, sem porta exposta |
-| `build-image.sh` | builda a imagem no host pela Docker API do Portainer |
-| `terraform/` | tunnel, CNAME, build e stack no Portainer |
+| `Dockerfile`, `nginx.conf` | nginx servindo `site/`, com `Cache-Control: no-cache` e Range requests (exigidas pelo CheerpJ), e repassando `/api/` ao runner |
+| `Dockerfile.runner` | JDK + `heroscript.server.RunnerServer`: executa os programas do playground |
+| `docker-compose.yml` | site + runner + `cloudflared`, sem porta exposta |
+| `docker-compose.local.yml` | site + runner para teste local, publicado só em `127.0.0.1` |
+| `build-image.sh` | builda uma imagem no host pela Docker API do Portainer (`CONTEXT_PATHS` escolhe o que enviar) |
+| `terraform/` | tunnel, CNAME, build das duas imagens e stack no Portainer |
 | `set-github-secrets.sh` | sobe os secrets para o GitHub Environment a partir do seu `terraform.tfvars` local |
 
 ## Segredos: só no GitHub Environment
@@ -47,7 +49,30 @@ terraform init -backend-config=backend.hcl   # precisa de AWS_ACCESS_KEY_ID/AWS_
 terraform plan
 ```
 
-Para só testar a imagem: `docker build -f deploy/Dockerfile -t heroscript . && docker run --rm -p 8080:80 heroscript`.
+Para testar o site com o runner, sem túnel:
+
+```bash
+scripts/build_site.sh
+docker build -f deploy/Dockerfile -t heroscript .
+docker build -f deploy/Dockerfile.runner -t heroscript-runner .
+docker compose -f deploy/docker-compose.local.yml up      # http://127.0.0.1:8080/playground/
+```
+
+## O runner
+
+O container `runner` executa Java arbitrário enviado por visitantes (ver
+[Playground](../docs/como-funciona/playground.md)). O que o contém está no `docker-compose.yml`:
+
+- **Rede**: só a `runner-network`, `internal: true`. Sem internet, sem LAN, sem os outros stacks; só o nginx o alcança.
+- **Disco**: `read_only`, com `/tmp` em `tmpfs` de 64 MB.
+- **Privilégios**: usuário `nobody`, `cap_drop: ALL`, `no-new-privileges`.
+- **Recursos**: `pids_limit: 256`, 1 GB de memória, 1,5 CPU.
+
+Não adicione a ele `ports`, volumes, o socket do Docker, outra rede ou variáveis com segredos. O nginx resolve
+`runner` a cada requisição, então o site sobe e funciona (executando no navegador) mesmo com o runner parado.
+
+Ajustes por variável de ambiente no serviço: `RUNNER_CONCURRENCY` (2), `RUNNER_TIMEOUT_SECONDS` (10),
+`RUNNER_MAX_SOURCE_BYTES`, `RUNNER_MAX_OUTPUT_BYTES`, `RUNNER_CHILD_MEMORY` (`128m`).
 
 Não existe `cloudflare_ruleset` aqui de propósito: a fase de cache da zona pertence ao `tf-parque-palmeiras`
 (uma zona só tem um ruleset por fase).

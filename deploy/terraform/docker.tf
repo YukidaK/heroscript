@@ -32,3 +32,29 @@ resource "null_resource" "docker_build" {
     }
   }
 }
+
+# Imagem do runner do playground (deploy/Dockerfile.runner): compila src/ dentro do build,
+# então só muda quando o compilador/runtime ou o Dockerfile mudam.
+resource "null_resource" "docker_build_runner" {
+  triggers = {
+    files_hash = md5(join(",", concat(
+      [filemd5("${local.repo_root}/deploy/Dockerfile.runner")],
+      [for f in fileset("${local.repo_root}/src", "**") : filemd5("${local.repo_root}/src/${f}")],
+    )))
+  }
+
+  provisioner "local-exec" {
+    command = "${local.repo_root}/deploy/build-image.sh"
+
+    environment = {
+      PORTAINER_ENDPOINT = var.portainer_endpoint
+      PORTAINER_USER     = var.portainer_user
+      PORTAINER_PASSWORD = var.portainer_password
+      ENDPOINT_ID        = tostring(data.portainer_environment.local.id)
+      CONTEXT_DIR        = local.repo_root
+      CONTEXT_PATHS      = "deploy/Dockerfile.runner src"
+      DOCKERFILE         = "deploy/Dockerfile.runner"
+      IMAGE_TAG          = var.runner_image_tag
+    }
+  }
+}

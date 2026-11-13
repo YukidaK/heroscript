@@ -22,7 +22,14 @@ resource "portainer_stack" "site" {
     value = null_resource.docker_build.triggers.files_hash
   }
 
+  # Mesmo motivo, para a imagem do runner do playground.
+  env {
+    name  = "RUNNER_HASH"
+    value = null_resource.docker_build_runner.triggers.files_hash
+  }
+
   depends_on = [
     null_resource.docker_build,
+    null_resource.docker_build_runner,
   ]
 }

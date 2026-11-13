@@ -8,26 +8,18 @@ copyright: Projeto acadêmico — HeroScript
 
 theme:
   name: material
+  custom_dir: overrides
   language: pt-BR
-  icon:
-    logo: material/lightning-bolt
-    repo: fontawesome/brands/github
+  logo: assets/logo.svg
   favicon: assets/favicon.svg
+  icon:
+    repo: fontawesome/brands/github
+  # Tema único, escuro, de quadrinho noir: cores e fontes vêm de docs/assets/comic-tokens.css e comic.css.
+  font: false
   palette:
-    - media: "(prefers-color-scheme: light)"
-      scheme: default
-      primary: deep purple
-      accent: pink
-      toggle:
-        icon: material/weather-night
-        name: Modo escuro
-    - media: "(prefers-color-scheme: dark)"
-      scheme: slate
-      primary: deep purple
-      accent: pink
-      toggle:
-        icon: material/weather-sunny
-        name: Modo claro
+    scheme: slate
+    primary: custom
+    accent: custom
   features:
     - navigation.tabs
     - navigation.sections
@@ -40,7 +32,8 @@ theme:
     - search.highlight
 
 extra_css:
-  - assets/extra.css
+  - assets/comic-tokens.css
+  - assets/comic.css
 
 markdown_extensions:
   - admonition

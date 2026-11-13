@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" preserveAspectRatio="xMidYMid slice">
+<defs>
+<pattern id="dots" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="4.5" cy="4.5" r="1.5" fill="#f2efe6"/></pattern>
+<pattern id="dotsk" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="4.5" cy="4.5" r="1.9" fill="#0d0d0d"/></pattern>
+<pattern id="dotso" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="4.5" cy="4.5" r="1.7" fill="#ff6a13"/></pattern>
+<linearGradient id="fadeDown" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#000"/></linearGradient>
+<linearGradient id="fadeUp" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#000"/></linearGradient>
+<mask id="mDown"><rect width="600" height="400" fill="url(#fadeDown)"/></mask>
+<mask id="mUp"><rect width="600" height="400" fill="url(#fadeUp)"/></mask>
+</defs>
+<rect width="600" height="400" fill="#0d0d0d"/>
+<rect width="600" height="400" fill="#f2efe6"/><rect width="600" height="400" fill="url(#dotsk)" opacity=".2"/><polygon points="0,0 250,0 120,400 0,400" fill="#0d0d0d"/><path d="M300 92 C240 92 190 110 150 150 C122 178 104 196 92 204 C120 232 146 272 196 286 C240 298 272 266 300 240 C328 266 360 298 404 286 C454 272 480 232 508 204 C496 196 478 178 450 150 C410 110 360 92 300 92 Z" fill="#000" transform="translate(10 12)"/><path d="M300 92 C240 92 190 110 150 150 C122 178 104 196 92 204 C120 232 146 272 196 286 C240 298 272 266 300 240 C328 266 360 298 404 286 C454 272 480 232 508 204 C496 196 478 178 450 150 C410 110 360 92 300 92 Z" fill="#0d0d0d" stroke="#f2efe6" stroke-width="7" stroke-linejoin="round"/><path d="M168 190 C196 162 236 160 268 184 C250 214 206 226 168 190 Z" fill="#ff6a13"/><path d="M432 190 C404 162 364 160 332 184 C350 214 394 226 432 190 Z" fill="#ff6a13"/><rect x="330" y="318" width="210" height="46" fill="#0d0d0d" transform="rotate(-6 435 341)"/><rect x="346" y="334" width="120" height="8" fill="#f2efe6" transform="rotate(-6 435 341)"/><rect x="346" y="348" width="80" height="6" fill="#ff6a13" transform="rotate(-6 435 341)"/>
+</svg>

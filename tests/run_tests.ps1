@@ -64,8 +64,14 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 & java '-Dfile.encoding=UTF-8' -cp $heroClasses (Join-Path $PSScriptRoot 'RevisionFixTests.java')
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+Push-Location (Split-Path $PSScriptRoot -Parent)
+try { & java '-Dfile.encoding=UTF-8' -cp build/classes tests/RunnerServerTests.java } finally { Pop-Location }
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 if (Get-Command node -ErrorAction SilentlyContinue) {
     Push-Location (Split-Path $PSScriptRoot -Parent)
-    try { & node tests/spiderSense-editor.mjs } finally { Pop-Location }
+    try {
+        & node tests/spiderSense-editor.mjs
+        if ($LASTEXITCODE -eq 0) { & node tests/playground-server.mjs }
+    } finally { Pop-Location }
 }
 exit $LASTEXITCODE

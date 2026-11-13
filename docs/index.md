@@ -1,73 +1,44 @@
 ---
+template: home.html
+title: HeroScript
 hide:
   - navigation
+  - toc
 ---
-
-<div class="hs-hero" markdown>
-
-# :material-lightning-bolt: HeroScript
-
-Uma linguagem de programação de super-heróis, poderes e missões — **transpilada para Java**.
-
-[Começar](instalacao.md){ .md-button .md-button--primary }
-[Abrir o playground](playground/index.html){ .md-button }
-[Ver exemplos](exemplos/index.md){ .md-button }
-
-</div>
-
-## Por que HeroScript?
-
-A HeroScript não troca apenas `class` por `hero`. Ela reaproveita do Java o que já funciona bem — tipos,
-expressões, `if`, `for`, `while`, `try/catch` — e acrescenta **conceitos novos com regras próprias**, verificadas
-pela linguagem:
-
-<div class="grid cards" markdown>
-
-- :material-flash: **Poderes com custo e recarga**
-
-    `unleash` confere energia, recarga e fogo amigo antes de agir.
-
-- :material-shield-half-full: **Gadgets com usos limitados**
-
-    `shield(Armor)` bloqueia o próximo golpe e gasta um uso.
-
-- :material-auto-fix: **Transformações temporárias**
-
-    `transform` aplica modificadores que expiram sozinhos depois de N ações.
-
-- :material-incognito: **Identidade secreta**
-
-    `secret` só pode ser lido dentro das missões autorizadas — não é um `private` renomeado.
-
-- :material-account-group: **Squads e combos**
-
-    Heróis cooperam; o custo do combo é dividido entre os membros disponíveis.
-
-- :material-bug: **Erros temáticos**
-
-    `HeroError: InsufficientEnergy`, `PowerOnCooldown`, `SecretAccessDenied`...
-
-</div>
 
 ## Um gostinho
 
-=== "programa.hero"
+<div class="hs-taste" markdown>
 
-    ```java
-    --8<-- "examples/hello.hero"
-    ```
+<div class="hs-taste__panel" markdown>
+<span class="hs-caption">programa.hero</span>
 
-=== "Saída"
+```java
+--8<-- "examples/hello.hero"
+```
+</div>
 
-    ```text
-    --8<-- "tests/expected/hello.out"
-    ```
-
-## Como funciona em uma linha
+<div class="hs-taste__panel" markdown>
+<span class="hs-caption hs-caption--orange">Saída</span>
 
 ```text
-arquivo.hero → Lexer → tokens → Parser → AST → JavaGenerator → Programa.java → javac → execução
+--8<-- "tests/expected/hello.out"
 ```
+</div>
 
-O mesmo compilador roda no terminal e, via WebAssembly, [no navegador](playground/index.html).
-Os detalhes estão em [Como funciona](como-funciona/index.md).
+</div>
+
+[Rodar este programa no playground](playground/index.html?example=hello){ .md-button .md-button--primary }
+[Ver todos os exemplos](exemplos/index.md){ .md-button }
+
+## Do arquivo à execução
+
+A HeroScript reaproveita do Java o que já funciona bem — tipos, expressões, `if`, `for`, `while`, `try/catch` — e
+acrescenta conceitos novos com regras próprias, verificadas pela linguagem.
+
+<div class="hs-pipeline" markdown>
+<span>arquivo.hero</span><span>Lexer</span><span>Parser</span><span>AST</span><span>JavaGenerator</span><span>javac</span><span>execução</span>
+</div>
+
+O mesmo compilador roda no terminal e [no playground](playground/index.html). Os detalhes estão em
+[Como funciona](como-funciona/index.md).

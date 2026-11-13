@@ -9,6 +9,30 @@ services:
       BUILD_HASH: ${BUILD_HASH}
     networks:
       - heroscript-network
+      - runner-network
+
+  # Executa os programas do playground (POST /api/..., repassado pelo nginx).
+  # Roda Java arbitrario enviado por visitantes: tudo abaixo existe para conter isso.
+  runner:
+    image: heroscript-runner:latest
+    container_name: heroscript-runner
+    restart: unless-stopped
+    environment:
+      RUNNER_HASH: ${RUNNER_HASH}
+    read_only: true                 # nada no disco da imagem pode ser alterado
+    tmpfs:
+      - /tmp:size=64m,mode=1777     # unico lugar gravavel; some quando o container reinicia
+    user: "65534:65534"             # nobody
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 256                 # barra fork bomb / explosao de threads
+    mem_limit: 1g
+    memswap_limit: 1g
+    cpus: 1.5
+    networks:
+      - runner-network              # so esta: sem internet, sem LAN, sem os outros stacks
 
   cloudflared:
     image: cloudflare/cloudflared:latest
@@ -24,3 +48,7 @@ services:
 networks:
   heroscript-network:
     driver: bridge
+  # internal: o Docker nao cria rota de saida. O runner so alcanca o nginx, e so o nginx alcanca o runner.
+  runner-network:
+    driver: bridge
+    internal: true

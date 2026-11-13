@@ -1,0 +1,109 @@
+{#- Página inicial em painéis de quadrinho. O texto em Markdown de docs/index.md entra no fim ({{ page.content }}). -#}
+{% extends "main.html" %}
+
+{% block container %}
+<div class="md-content hs-home" data-md-component="content">
+  <article class="md-content__inner md-typeset">
+
+    <section class="hs-cover">
+      <div class="hs-cover__text">
+        <span class="hs-caption hs-caption--orange">Edição nº 1 · transpilada para Java</span>
+        <h1 class="hs-title">Hero<span>Script</span></h1>
+        <p class="hs-lead">Uma linguagem de programação de super-heróis, poderes e missões. Você escreve
+          <code>hero</code>, <code>power</code> e <code>unleash</code>; o compilador confere as regras e gera Java.</p>
+        <p class="hs-actions">
+          <a class="md-button md-button--primary" href="{{ 'instalacao/' | url }}">Começar</a>
+          <a class="md-button" href="{{ 'playground/index.html' | url }}">Abrir o playground</a>
+        </p>
+      </div>
+      <div class="hs-collage" aria-hidden="true">
+        <div class="hs-collage__main"><img src="{{ 'assets/art/hero-city.svg' | url }}" alt=""></div>
+        <div class="hs-collage__a"><img src="{{ 'assets/art/villain.svg' | url }}" alt=""></div>
+        <div class="hs-collage__b"><img src="{{ 'assets/art/burst.svg' | url }}" alt=""><b>Pow!</b></div>
+      </div>
+    </section>
+
+    <nav class="hs-page" aria-label="Seções da documentação">
+      <a class="hs-panel hs-panel--1" href="{{ 'primeiro-programa/' | url }}">
+        <img src="{{ 'assets/art/hero-city.svg' | url }}" alt="">
+        <span class="hs-panel__text"><span class="hs-caption">Primeiro programa</span><small>Um herói, um vilão e dois golpes.</small></span>
+      </a>
+      <a class="hs-panel hs-panel--2" href="{{ 'linguagem/' | url }}">
+        <img src="{{ 'assets/art/language.svg' | url }}" alt="">
+        <span class="hs-panel__text"><span class="hs-caption">A linguagem</span><small>Personagens, poderes, missões e mais.</small></span>
+      </a>
+      <a class="hs-panel hs-panel--3" href="{{ 'exemplos/' | url }}">
+        <img src="{{ 'assets/art/burst.svg' | url }}" alt="">
+        <span class="hs-panel__text"><span class="hs-caption">Exemplos</span><small>Vinte programas com a saída real.</small></span>
+      </a>
+      <a class="hs-panel hs-panel--4" href="{{ 'como-funciona/' | url }}">
+        <img src="{{ 'assets/art/gears.svg' | url }}" alt="">
+        <span class="hs-panel__text"><span class="hs-caption">Como funciona</span><small>Lexer, parser, gerador e runtime.</small></span>
+      </a>
+      <a class="hs-panel hs-panel--5" href="{{ 'playground/index.html' | url }}">
+        <img src="{{ 'assets/art/console.svg' | url }}" alt="">
+        <span class="hs-panel__text"><span class="hs-caption hs-caption--orange">Playground</span><small>Escreva e execute aqui mesmo.</small></span>
+      </a>
+    </nav>
+
+    <section class="hs-feature">
+      <div class="hs-feature__art" aria-hidden="true"><img src="{{ 'assets/art/power.svg' | url }}" alt=""><i></i></div>
+      <div class="hs-feature__text">
+        <h2>Poderes com custo e recarga</h2>
+        <p><code>unleash</code> não é uma chamada de método qualquer: antes de agir, a linguagem confere se há energia,
+          se o poder já recarregou e se o alvo não é outro herói. <code>evolve</code> deixa o golpe mais forte a cada uso.</p>
+        <a class="md-button" href="{{ 'linguagem/poderes/' | url }}">Poderes e unleash</a>
+      </div>
+    </section>
+
+    <section class="hs-feature hs-feature--flip">
+      <div class="hs-feature__art" aria-hidden="true"><img src="{{ 'assets/art/shield.svg' | url }}" alt=""><i></i></div>
+      <div class="hs-feature__text">
+        <h2>Gadgets e transformações</h2>
+        <p><code>shield(Armor)</code> bloqueia o próximo golpe e gasta um uso. <code>transform</code> aplica modificadores
+          que expiram sozinhos depois de algumas ações — e a forma volta ao normal sem você pedir.</p>
+        <a class="md-button" href="{{ 'linguagem/gadgets/' | url }}">Gadgets</a>
+        <a class="md-button" href="{{ 'linguagem/formas/' | url }}">Formas</a>
+      </div>
+    </section>
+
+    <section class="hs-feature">
+      <div class="hs-feature__art" aria-hidden="true"><img src="{{ 'assets/art/mask.svg' | url }}" alt=""><i></i></div>
+      <div class="hs-feature__text">
+        <h2>Identidade secreta</h2>
+        <p><code>secret</code> não é um <code>private</code> renomeado: o valor só pode ser lido dentro das missões
+          autorizadas. A <code>batcave</code> guarda estado longe de vilões, e <code>kryptonite</code> esconde uma
+          variável de quem está observando.</p>
+        <a class="md-button" href="{{ 'linguagem/secret/' | url }}">Secret</a>
+        <a class="md-button" href="{{ 'linguagem/batcave/' | url }}">Batcave</a>
+      </div>
+    </section>
+
+    <section class="hs-feature hs-feature--flip">
+      <div class="hs-feature__art" aria-hidden="true"><img src="{{ 'assets/art/squad.svg' | url }}" alt=""><i></i></div>
+      <div class="hs-feature__text">
+        <h2>Squads e combos</h2>
+        <p>Heróis cooperam em equipe. O custo de um combo é dividido entre os membros que ainda estão de pé e com
+          energia — e vilão não entra em squad, nem que tente.</p>
+        <a class="md-button" href="{{ 'linguagem/squads/' | url }}">Squads e combos</a>
+      </div>
+    </section>
+
+    <section class="hs-feature">
+      <div class="hs-feature__art" aria-hidden="true"><img src="{{ 'assets/art/web.svg' | url }}" alt=""><i></i></div>
+      <div class="hs-feature__text">
+        <h2>Erros com nome e sentido de aranha</h2>
+        <p>Quando algo dá errado, o erro diz o quê: <code>InsufficientEnergy</code>, <code>PowerOnCooldown</code>,
+          <code>SecretAccessDenied</code>. No playground, o spiderSense marca os problemas enquanto você digita.</p>
+        <a class="md-button" href="{{ 'linguagem/erros/' | url }}">Erros</a>
+        <a class="md-button" href="{{ 'linguagem/spider-sense/' | url }}">SpiderSense</a>
+      </div>
+    </section>
+
+    <section class="hs-prose">
+      {{ page.content }}
+    </section>
+
+  </article>
+</div>
+{% endblock %}

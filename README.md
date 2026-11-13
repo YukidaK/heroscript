@@ -207,9 +207,15 @@ uv run mkdocs serve        # http://127.0.0.1:8000, recarrega ao editar
 As páginas de exemplo incluem o código de `examples/` e a saída real de `tests/expected/`, então documentação e
 testes nunca divergem.
 
-### 6. Playground web (WebAssembly)
+O visual de quadrinho noir é um tema por cima do Material: cores e fontes em `docs/assets/comic-tokens.css` (também
+usado pelo playground), estilos em `docs/assets/comic.css`, ilustrações em `docs/assets/art/` e a página inicial em
+`overrides/home.html`.
 
-O playground roda **o mesmo compilador** no navegador: o [CheerpJ](https://cheerpj.com) executa a JVM em
+### 6. Playground web
+
+No site publicado, o playground envia o programa a um serviço isolado no servidor (`heroscript.server.RunnerServer`,
+ver `deploy/`), que responde em 0,5 a 2 s. Se o servidor não responder, o playground roda **o mesmo compilador**
+no navegador: o [CheerpJ](https://cheerpj.com) executa a JVM em
 WebAssembly, o [ECJ](https://eclipse.dev/jdt/core/) substitui o `javac` e a API do Java 17 vem de um jar extraído
 do `ct.sym` do JDK. Para montar e testar localmente:
 

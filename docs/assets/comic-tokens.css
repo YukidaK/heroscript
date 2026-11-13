@@ -1,0 +1,47 @@
+/* Tokens visuais da HeroScript: quadrinho noir, preto e branco com um único destaque laranja.
+   Usado pela documentação (docs/assets/comic.css) e pelo playground (copiado por scripts/build_playground.sh). */
+@import url("https://fonts.googleapis.com/css2?family=Bangers&family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Barlow+Condensed:wght@600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap");
+
+:root {
+  /* cores */
+  --hs-ink: #0d0d0d;        /* fundo: tinta */
+  --hs-panel: #161616;      /* superfície de painel */
+  --hs-panel-2: #1f1f1f;
+  --hs-line: #2e2e2e;       /* divisórias discretas */
+  --hs-paper: #f2efe6;      /* papel: bordas, legendas, texto principal */
+  --hs-text: #e8e5dc;
+  --hs-muted: #a29f97;
+  --hs-orange: #ff6a13;     /* único destaque */
+  --hs-orange-soft: #ff9550; /* laranja para texto pequeno sobre tinta */
+  --hs-red: #ff6b5e;
+  --hs-green: #8fd6a0;
+
+  /* tipos */
+  --hs-font-display: "Barlow Condensed", "Arial Narrow", sans-serif;  /* títulos */
+  --hs-font-comic: "Bangers", "Barlow Condensed", sans-serif;         /* legendas, rótulos, onomatopeias */
+  --hs-font-text: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --hs-font-code: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+
+  /* traço */
+  --hs-stroke: 3px;
+  --hs-shadow: 6px 6px 0 #000;
+  --hs-halftone: radial-gradient(circle at center, rgba(242, 239, 230, .16) 0 1.1px, transparent 1.3px) 0 0 / 7px 7px;
+  --hs-halftone-orange: radial-gradient(circle at center, rgba(255, 106, 19, .55) 0 1.3px, transparent 1.5px) 0 0 / 7px 7px;
+}
+
+/* Caixa de legenda de quadrinho: papel, tinta preta, levemente girada. */
+.hs-caption {
+  display: inline-block;
+  padding: .12em .6em .06em;
+  background: var(--hs-paper);
+  color: #000;
+  border: 2px solid #000;
+  box-shadow: 3px 3px 0 #000;
+  font-family: var(--hs-font-comic);
+  font-weight: 400;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  line-height: 1.25;
+  transform: rotate(-1.2deg);
+}
+.hs-caption--orange { background: var(--hs-orange); }

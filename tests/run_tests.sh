@@ -41,6 +41,8 @@ java -Dfile.encoding=UTF-8 -cp "$ROOT/build/classes" "$ROOT/tests/HulkSmashTests
 java -Dfile.encoding=UTF-8 -cp "$ROOT/build/classes" "$ROOT/tests/SpiderSenseTests.java" || exit 1
 java -Dfile.encoding=UTF-8 -cp "$ROOT/build/classes" "$ROOT/tests/ValidationTests.java" || exit 1
 java -Dfile.encoding=UTF-8 -cp "$ROOT/build/classes" "$ROOT/tests/RevisionFixTests.java" || exit 1
+(cd "$ROOT" && java -Dfile.encoding=UTF-8 -cp build/classes tests/RunnerServerTests.java) || exit 1
 if command -v node >/dev/null 2>&1; then
     (cd "$ROOT" && node tests/spiderSense-editor.mjs) || exit 1
+    (cd "$ROOT" && node tests/playground-server.mjs) || exit 1
 fi
