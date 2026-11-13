@@ -107,6 +107,6 @@ Nenhuma das operações é uma barreira ao acesso direto ao fonte ou ao Java ger
 
 Para experimentar:
 
-```powershell
-java -cp build/classes heroscript.compiler.Main run examples/supervision.hero
+```bash
+./heroscript run examples/supervision.hero
 ```

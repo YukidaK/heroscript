@@ -7,7 +7,8 @@ class Element {
   setAttribute(name, value) { this.attributes[name] = value; }
   append(child) { this.children.push(child); }
   replaceChildren() { this.children = []; this.textContent = ''; }
-  addEventListener() {}
+  listeners = {};
+  addEventListener(type, handler) { this.listeners[type] = handler; }
   after(panel) { this.panel = panel; }
 }
 const elements = new Map();
@@ -71,4 +72,13 @@ response = []; await analyze();
 assert.match(wrapper.panel.textContent, /nenhum problema/);
 assert.equal(runs, 1, 'only existing startup warmup runs; diagnostics never run user code');
 assert.equal(calls, 4);
+// Executar durante a análise: o botão continua habilitado e o clique espera a análise em vez de ser ignorado.
+let resolveSlow;
+response = new Promise(resolve => { resolveSlow = resolve; });
+editor.setValue('slow'); await analyze();
+assert.equal(elements.get('run').disabled, false, 'analysis does not disable the run button');
+elements.get('run').listeners.click(); await settle();
+assert.equal(runs, 1, 'run waits for the analysis in flight');
+resolveSlow([]); await settle();
+assert.equal(runs, 2, 'run requested during analysis is executed, not dropped');
 console.log('spiderSense editor lifecycle checks passed');

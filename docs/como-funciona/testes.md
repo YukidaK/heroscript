@@ -1,18 +1,43 @@
 # Testes
 
-`tests/run_tests.sh` executa cada programa de `examples/` e `tests/cases/` e compara a saída (mais o código de
-saída) com `tests/expected/<nome>.out`.
+`tests/run_tests.sh` tem três etapas; qualquer falha interrompe o script (e o build do site).
+
+1. **Programas**: executa cada `.hero` de `examples/` e `tests/cases/` e compara a saída (mais o código de saída)
+   com `tests/expected/<nome>.out`.
+2. **Suítes Java**: arquivos de `tests/*.java`, executados direto pelo `java` contra `build/classes`. Cada um
+   compila pequenos programas em memória e confere saída, erros e Java gerado.
+3. **Editor**: se houver Node.js, `tests/spiderSense-editor.mjs` carrega o `playground.js` com um DOM simulado.
 
 ```bash
-tests/run_tests.sh            # 16 ok, 0 falha(s)
-tests/run_tests.sh --update   # regrava as saídas esperadas
+tests/run_tests.sh            # 24 ok, 0 falha(s) + suítes Java + teste do editor
+tests/run_tests.sh --update   # regrava as saídas esperadas (só da etapa 1)
 ```
+
+No Windows, `tests/run_tests.ps1` faz o mesmo.
 
 | Pasta | Conteúdo |
 |---|---|
 | `examples/` | programas de exemplo — também usados nesta documentação e no playground |
 | `tests/cases/` | erros propositais: sintaxe, propriedade inválida, vilão em squad, erro no Java embutido |
 | `tests/expected/` | saídas esperadas |
+
+| Suíte | Cobre |
+|---|---|
+| `FeatureTests` | batcave, `secret` em membros e locais, kryptonite, visibilidade |
+| `InvestigatorTests` | `batinvestigate`: origens, filtro de `secret`, locais Java |
+| `SupervisionTests` | `getValue` e `getMethod` |
+| `FlashTravelTests` | saltos, escopo e inicialização em `flashPoint` |
+| `DeadpoolActionTests` | sorteio, limites de `chance`, saltos proibidos |
+| `BatplanTests` | identidade, aliases, novas instâncias |
+| `HulkSmashTests` | regiões `blackwidow`, `hulkbuster`, laços aninhados |
+| `SpiderSenseTests` | erros e avisos em JSON, sem executar o programa |
+| `ValidationTests` | recursos combinados e paridade entre `check` e spiderSense |
+| `RevisionFixTests` | vilões na batcave, `FriendlyFire` em combos, literais numéricos, strings incompletas |
+| `spiderSense-editor.mjs` | marcadores do editor, descarte de análises antigas, Executar durante a análise |
+
+!!! warning "O que esses testes não cobrem"
+    Tudo acima roda na JVM local, com o `javac`. O playground usa outro compilador (ECJ) e outra JVM (CheerpJ);
+    para testar esse caminho veja [Playground](playground.md#testando-o-caminho-do-navegador).
 
 !!! success "Documentação sempre correta"
     As páginas de [exemplos](../exemplos/index.md) incluem o código de `examples/` e a saída de `tests/expected/`

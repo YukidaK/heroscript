@@ -29,18 +29,31 @@ cp "$ECJ_JAR" "$OUT/ecj.jar"
 JDK_HOME="$(dirname "$(dirname "$(readlink -f "$(command -v javac)")")")"
 python3 "$ROOT/scripts/make_jdk_stub.py" "$JDK_HOME/lib/ct.sym" "$OUT/jdk17-base.jar" 17
 
-# examples.json: {"nome": {"title": "<primeiro comentário>", "code": "..."}}, na ordem de EXAMPLES.
+# examples.json: {"nome": {"title": "<primeiro comentário, ou titles[nome]>", "code": "..."}}, na ordem de order.
 python3 - "$ROOT/examples" "$OUT/examples.json" <<'PY'
 import json, pathlib, sys
 order = ["hello", "iron", "cooldown", "transformations", "evolve_loop", "secret", "squad",
-         "rescue", "tournament", "boss_fight", "catch_errors", "errors"]
+         "rescue", "tournament", "boss_fight", "catch_errors", "errors",
+         "batcave", "secret_members", "vision", "supervision", "flashtravel", "deadpool_action",
+         "batplan", "hulksmash"]
+# Exemplos sem comentário na primeira linha (em flashtravel.hero os números de linha fazem parte do programa).
+titles = {
+    "batcave": "Batcave com membros privados e sem observação interna",
+    "secret_members": "secret em campos, métodos e variáveis locais",
+    "vision": "supervision.getValue e variáveis kryptonite",
+    "supervision": "supervision: getValue e getMethod",
+    "flashtravel": "flashPoint e saltos com flashtravel",
+    "deadpool_action": "Blocos sorteados com deadpoolAction",
+    "batplan": "Desativando objetos com batplan",
+    "hulksmash": "hulksmash, blackwidow e hulkbuster",
+}
 src = pathlib.Path(sys.argv[1])
 names = order + sorted(p.stem for p in src.glob("*.hero") if p.stem not in order)
 data = {}
 for name in names:
     code = (src / f"{name}.hero").read_text(encoding="utf-8")
     first = code.splitlines()[0]
-    title = first.removeprefix("//").strip() if first.startswith("//") else name
+    title = first.removeprefix("//").strip() if first.startswith("//") else titles.get(name, name)
     data[name] = {"title": title, "code": code}
 pathlib.Path(sys.argv[2]).write_text(json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
 PY

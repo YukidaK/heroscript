@@ -63,8 +63,8 @@ mostrando sua chance e a estrutura filtrada, sem fazer o sorteio nem executar
 o corpo. Batinvestigate continua localizando declarações visíveis dentro do
 bloco, sem revelar conteúdo e sem listar símbolos secret.
 
-Check e a análise de fonte não fazem sorteios. SpiderSense continua adiado para
-a etapa final; os erros deste recurso estão registrados no contrato de atualização.
+Check e a análise de fonte não fazem sorteios. O [spiderSense](spider-sense.md) avisa, sem impedir a
+compilação, sobre todo `deadpoolAction` executável com chance menor que 100.
 
 ## Exemplo reproduzível
 
@@ -74,6 +74,6 @@ O exemplo de regressão usa 0% e 100% para ter saída estável sem seed:
 --8<-- "examples/deadpool_action.hero"
 ```
 
-```powershell
-java -cp build/classes heroscript.compiler.Main run examples/deadpool_action.hero
+```bash
+./heroscript run examples/deadpool_action.hero
 ```

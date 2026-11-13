@@ -17,5 +17,13 @@ são executados pelos testes automáticos e podem ser abertos no playground. A s
 | [Luta contra chefe](boss_fight.md) | Um vilão com missão própria, gadget e uma forma de fúria quando perde metade da vida. | [▶](../playground/index.html?example=boss_fight) |
 | [Tratando erros](catch_errors.md) | `switch` do Java sobre `e.kind()` para reagir a cada tipo de `HeroError`. | [▶](../playground/index.html?example=catch_errors) |
 | [Todos os erros](errors.md) | Dispara e trata, em sequência, cada `HeroError` da linguagem. | [▶](../playground/index.html?example=errors) |
+| [Batcave](batcave.md) | Uma `batcave` com membros privados por padrão: o `supervision` não enxerga nada lá dentro. | [▶](../playground/index.html?example=batcave) |
+| [Membros secret](secret_members.md) | `secret` em campos, métodos e variáveis locais, dentro e fora de uma batcave. | [▶](../playground/index.html?example=secret_members) |
+| [Supervision e kryptonite](vision.md) | `supervision.getValue` observando variáveis comuns e uma variável `kryptonite`. | [▶](../playground/index.html?example=vision) |
+| [Supervision](supervision.md) | `getValue` mostra o valor de uma variável; `getMethod` mostra a estrutura de um método sem executá-lo. | [▶](../playground/index.html?example=supervision) |
+| [Flashtravel](flashtravel.md) | `flashPoint` como entrada do programa e saltos para linhas físicas com `flashtravel`. | [▶](../playground/index.html?example=flashtravel) |
+| [Deadpool action](deadpool_action.md) | Blocos que só executam se um sorteio permitir, com `chance` de 0 a 100. | [▶](../playground/index.html?example=deadpool_action) |
+| [Batplan](batplan.md) | `batplan(objeto)` desativa uma instância e todos os seus aliases. | [▶](../playground/index.html?example=batplan) |
+| [Hulksmash](hulksmash.md) | Um laço que executa somente as regiões `blackwidow` do seu corpo. | [▶](../playground/index.html?example=hulksmash) |
 
 Para rodar localmente: `./heroscript run examples/<nome>.hero`.

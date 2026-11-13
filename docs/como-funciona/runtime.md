@@ -10,6 +10,10 @@ O código gerado é fino: **as regras da linguagem ficam no runtime** (`src/hero
 | `Squad` | recrutamento com tipos permitidos e combos cooperativos |
 | `Arena` | pilha de missões em andamento, relato da batalha, `announce` e encerramento |
 | `HeroError` | erros de execução nomeados (`kind()`) |
+| `Supervision` | imprime as observações de `getValue`/`getMethod` e as suprime dentro de batcaves e de métodos `secret` (contador por thread) |
+| `BatcaveAccess` | percorre a pilha de chamadas (`StackWalker`) e lança `BatcaveAccessDenied` se houver um `Villain` nela |
+| `Batplan` | registro, por execução, dos objetos desativados; `Batplan.active(x)` lança `ObjectInactive` |
+| `DeadpoolAction` | o sorteio de `deadpoolAction` |
 
 ## Exemplo: a regra do `unleash`
 

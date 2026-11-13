@@ -92,7 +92,7 @@ região continuam indexados e símbolos secret permanecem ocultos.
 
 Para validar ou executar:
 
-```powershell
-java -cp build/classes heroscript.compiler.Main check examples/flashtravel.hero
-java -cp build/classes heroscript.compiler.Main run examples/flashtravel.hero
+```bash
+./heroscript check examples/flashtravel.hero
+./heroscript run examples/flashtravel.hero
 ```

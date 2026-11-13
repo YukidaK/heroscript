@@ -81,6 +81,7 @@ nav:
       - Secret: linguagem/secret.md
       - Batcave: linguagem/batcave.md
       - Supervision: linguagem/supervision.md
+      - Kryptonite: linguagem/kryptonite.md
       - Batinvestigate: linguagem/batinvestigate.md
       - Missões: linguagem/missoes.md
       - Squads e combos: linguagem/squads.md
@@ -107,6 +108,14 @@ nav:
       - Luta contra chefe: exemplos/boss_fight.md
       - Tratando erros: exemplos/catch_errors.md
       - Todos os erros: exemplos/errors.md
+      - Batcave: exemplos/batcave.md
+      - Membros secret: exemplos/secret_members.md
+      - Supervision e kryptonite: exemplos/vision.md
+      - Supervision: exemplos/supervision.md
+      - Flashtravel: exemplos/flashtravel.md
+      - Deadpool action: exemplos/deadpool_action.md
+      - Batplan: exemplos/batplan.md
+      - Hulksmash: exemplos/hulksmash.md
   - Como funciona:
       - como-funciona/index.md
       - Lexer: como-funciona/lexer.md

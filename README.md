@@ -306,6 +306,14 @@ Em tempo de execução (`HeroError`, podem ser tratados com `catch (HeroError e)
 | `examples/squad.hero` | três heróis diferentes, squad, combos e `SquadUnavailable` |
 | `examples/secret.hero` | controle de acesso de `secret` por missão |
 | `examples/errors.hero` | cada `HeroError` sendo disparado e tratado |
+| `examples/batcave.hero` | `batcave` com membros privados e sem observação interna |
+| `examples/secret_members.hero` | `secret` em campos, métodos e variáveis locais |
+| `examples/vision.hero` | `supervision.getValue` e variáveis `kryptonite` |
+| `examples/supervision.hero` | `supervision.getValue` e `supervision.getMethod` |
+| `examples/flashtravel.hero` | `flashPoint` e saltos com `flashtravel` |
+| `examples/deadpool_action.hero` | blocos sorteados com `deadpoolAction` |
+| `examples/batplan.hero` | desativação de objetos e aliases com `batplan` |
+| `examples/hulksmash.hero` | `hulksmash`, `blackwidow` e `hulkbuster` |
 
 ## Batplan
 
@@ -327,7 +335,7 @@ O recurso não força liberação de memória nem altera o funcionamento interno
 ./heroscript run examples/hulksmash.hero
 ```
 
-Veja as [regras de execução e escopo](docs/linguagem/hulksmash.md). Os futuros avisos do spiderSense não impedem compilar um loop sem blackwidow ou um hulkbuster ignorado.
+Veja as [regras de execução e escopo](docs/linguagem/hulksmash.md). Os avisos do spiderSense não impedem compilar um loop sem blackwidow ou um hulkbuster ignorado.
 
 ## SpiderSense
 

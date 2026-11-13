@@ -15,6 +15,17 @@ O `JavaGenerator` percorre a AST, **valida a semântica** e escreve um único ar
 | `unleash tony.P on x;` | `tony.unleash("P", x);` |
 | `shield(Armor)` | `shield("Armor")` |
 
+Os recursos da expansão têm apoio próprio no pacote `compiler`:
+
+| Classe | Papel |
+|---|---|
+| `FlashPlan` | transforma um `flashPoint` em uma máquina de estados (`while` + `switch`): cada instrução vira um estado, e as variáveis locais são declaradas antes do laço, cada uma com um indicador de inicialização |
+| `HulkRegions` | seleciona as regiões `blackwidow` de um `hulksmash`, sem emitir o que está fora delas |
+| `ObjectGuards` / `JavaBindings` | descobrem os tipos declarados no Java embutido para envolver acessos em `Batplan.active(...)` e nas verificações da batcave |
+| `MethodInspector` | monta, durante a compilação, o texto de `supervision.getMethod` |
+| `Investigator` | o comando `batinvestigate` (só lê a AST; não gera código) |
+| `SpiderSense` | diagnósticos para o editor: avisos sobre a AST + erros do compilador Java, sem executar |
+
 ## Validação semântica
 
 Erros detectados aqui, com linha e coluna: nomes duplicados, propriedade desconhecida, operador inválido em

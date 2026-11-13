@@ -42,6 +42,7 @@
   let timer = null;
   let diagnosticTimer = null;
   let revision = 0;
+  let analysis = null; // promessa da análise em curso; a JVM atende uma chamada por vez
   const diagnosticPanel = document.createElement("div");
   diagnosticPanel.setAttribute("aria-live", "polite");
   diagnosticPanel.style.cssText = "padding:8px;max-height:160px;overflow:auto;font-size:13px";
@@ -59,11 +60,22 @@
     scheduleDiagnostics();
   });
 
+  // A análise roda em segundo plano: não desabilita os botões nem mexe na barra de status. Se o usuário
+  // executar durante a análise, action() espera ela terminar em vez de ignorar o clique.
   async function analyzeEditor() {
-    if (!playground || busy) { scheduleDiagnostics(); return; }
+    if (!playground || busy || analysis) { scheduleDiagnostics(); return; }
     const version = revision;
-    const source = editor.getValue();
-    setBusy(true, "spiderSense: analisando…");
+    analysis = runAnalysis(version, editor.getValue());
+    try {
+      await analysis;
+    } finally {
+      analysis = null;
+      if (version !== revision) scheduleDiagnostics();
+    }
+  }
+
+  async function runAnalysis(version, source) {
+    diagnosticPanel.textContent = "spiderSense: analisando…";
     try {
       const issues = JSON.parse(String(await playground.diagnostics(source)));
       if (version !== revision) return;
@@ -95,9 +107,6 @@
       if (!issues.length) diagnosticPanel.textContent = "spiderSense: nenhum problema estático encontrado.";
     } catch (error) {
       if (version === revision) diagnosticPanel.textContent = `spiderSense indisponível: ${error}`;
-    } finally {
-      setBusy(false, "Pronto. Ctrl+Enter executa.");
-      if (version !== revision) scheduleDiagnostics();
     }
   }
 
@@ -153,8 +162,9 @@
     const titles = { run: "Saída", java: "Java gerado", tokens: "Tokens" };
     setBusy(true, kind === "run" ? "Compilando e executando…" : "Processando…");
     $("output-title").textContent = titles[kind];
-    const started = performance.now();
     try {
+      if (analysis) await analysis;
+      const started = performance.now();
       const result = await playground[kind](editor.getValue());
       render(String(result), kind === "run");
       $("timing").textContent = `${Math.round(performance.now() - started)} ms`;

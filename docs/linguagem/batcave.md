@@ -29,7 +29,7 @@ battle {
 
 `check` valida sem executar: uma chamada pode compilar e ser negada em execução conforme o chamador real. Declarar um `villain` dentro da batcave continua sendo erro de sintaxe. `public` não concede uma exceção a vilões, e `allow` não é uma lista de autorização de batcave.
 
-A verificação usa a cadeia ativa na thread atual. Não rastreia a origem de trabalhos assíncronos executados depois em outra thread. Reflexão e acessos internos de bibliotecas Java externas não são isolamento de segurança da JVM. A distribuição web com CheerpJ ainda requer validação do suporte de execução dessas verificações.
+A verificação usa a cadeia ativa na thread atual. Não rastreia a origem de trabalhos assíncronos executados depois em outra thread. Reflexão e acessos internos de bibliotecas Java externas não são isolamento de segurança da JVM. No playground (CheerpJ) a verificação funciona da mesma forma: o exemplo `batcave` e a negação a vilões foram executados no navegador.
 
 ## Observação e investigação
 
