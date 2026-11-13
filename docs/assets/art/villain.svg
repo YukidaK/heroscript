@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" preserveAspectRatio="xMidYMid slice">
+<defs>
+<pattern id="dots" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="4.5" cy="4.5" r="1.5" fill="#f2efe6"/></pattern>
+<pattern id="dotsk" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="4.5" cy="4.5" r="1.9" fill="#0d0d0d"/></pattern>
+<pattern id="dotso" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="4.5" cy="4.5" r="1.7" fill="#ff6a13"/></pattern>
+<linearGradient id="fadeDown" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#000"/></linearGradient>
+<linearGradient id="fadeUp" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#000"/></linearGradient>
+<mask id="mDown"><rect width="600" height="400" fill="url(#fadeDown)"/></mask>
+<mask id="mUp"><rect width="600" height="400" fill="url(#fadeUp)"/></mask>
+</defs>
+<rect width="600" height="400" fill="#ff6a13"/>
+<rect width="600" height="400" fill="#ff6a13"/><rect width="600" height="400" fill="url(#dotsk)" opacity=".3" mask="url(#mUp)"/><polygon points="360.0,148.1 939.2,118.8 939.9,140.4" fill="#000" opacity="0.18"/>
+<polygon points="357.7,166.5 918.8,313.2 911.4,339.1" fill="#000" opacity="0.18"/>
+<polygon points="349.8,183.4 845.3,485.0 816.5,527.9" fill="#000" opacity="0.18"/>
+<polygon points="340.4,194.3 743.3,611.7 719.3,633.5" fill="#000" opacity="0.18"/>
+<polygon points="323.8,205.1 563.9,733.1 542.9,742.1" fill="#000" opacity="0.18"/>
+<polygon points="306.5,209.7 386.6,784.1 351.2,788.0" fill="#000" opacity="0.18"/>
+<polygon points="294.3,209.7 264.5,789.0 214.4,784.3" fill="#000" opacity="0.18"/>
+<polygon points="275.0,204.5 52.6,740.2 13.9,722.5" fill="#000" opacity="0.18"/>
+<polygon points="259.0,193.8 -117.6,635.0 -155.4,599.7" fill="#000" opacity="0.18"/>
+<polygon points="250.1,183.3 -227.6,512.3 -237.1,498.0" fill="#000" opacity="0.18"/>
+<polygon points="241.9,165.0 -312.7,335.0 -325.7,284.4" fill="#000" opacity="0.18"/>
+<polygon points="240.0,152.4 -338.8,188.5 -339.9,161.9" fill="#000" opacity="0.18"/>
+<polygon points="242.0,134.7 -324.2,8.8 -312.8,-34.5" fill="#000" opacity="0.18"/>
+<polygon points="251.0,115.3 -229.2,-209.9 -215.0,-229.9" fill="#000" opacity="0.18"/>
+<polygon points="260.0,105.3 -144.7,-310.3 -107.5,-343.5" fill="#000" opacity="0.18"/>
+<polygon points="274.8,95.5 20.4,-425.7 42.9,-436.1" fill="#000" opacity="0.18"/>
+<polygon points="291.3,90.6 198.8,-481.9 216.0,-484.5" fill="#000" opacity="0.18"/>
+<polygon points="310.3,90.9 394.2,-483.0 424.9,-477.7" fill="#000" opacity="0.18"/>
+<polygon points="324.1,95.0 535.6,-445.1 577.5,-426.7" fill="#000" opacity="0.18"/>
+<polygon points="339.1,104.5 695.6,-353.1 737.7,-317.0" fill="#000" opacity="0.18"/>
+<polygon points="349.4,116.0 816.5,-227.9 837.4,-197.5" fill="#000" opacity="0.18"/>
+<polygon points="358.2,135.6 915.5,-25.4 926.3,18.5" fill="#000" opacity="0.18"/><rect x="0" y="338" width="66" height="434" fill="#000"/>
+<rect x="66" y="338" width="50" height="434" fill="#000"/>
+<rect x="116" y="338" width="34" height="434" fill="#000"/>
+<rect x="154" y="322" width="50" height="450" fill="#000"/>
+<rect x="177.0" y="296" width="4" height="26" fill="#000"/>
+<rect x="204" y="322" width="50" height="450" fill="#000"/>
+<rect x="258" y="338" width="42" height="434" fill="#000"/>
+<rect x="300" y="352" width="42" height="420" fill="#000"/>
+<rect x="346" y="338" width="42" height="434" fill="#000"/>
+<rect x="392" y="352" width="42" height="420" fill="#000"/>
+<rect x="438" y="338" width="58" height="434" fill="#000"/>
+<rect x="500" y="338" width="42" height="434" fill="#000"/>
+<rect x="542" y="322" width="50" height="450" fill="#000"/>
+<rect x="592" y="322" width="58" height="450" fill="#000"/>
+<rect x="619.0" y="296" width="4" height="26" fill="#000"/><g fill="#000"><path d="M300 400 L196 400 C200 300 214 214 252 176 C214 150 176 120 168 62 C196 104 232 126 274 140 C290 132 310 132 326 140 C368 126 404 104 432 62 C424 120 386 150 348 176 C386 214 400 300 404 400 Z"/><path d="M252 190 C190 220 130 300 96 400 L210 400 Z"/><path d="M348 190 C410 220 470 300 504 400 L390 400 Z"/></g><polygon points="262,196 292,206 284,218 258,208" fill="#f2efe6"/><polygon points="338,196 308,206 316,218 342,208" fill="#f2efe6"/>
+</svg>

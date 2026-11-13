@@ -52,3 +52,9 @@ variable "image_tag" {
   type        = string
   default     = "heroscript:latest"
 }
+
+variable "runner_image_tag" {
+  description = "Tag local da imagem do runner do playground; a mesma escrita no docker-compose.yml"
+  type        = string
+  default     = "heroscript-runner:latest"
+}

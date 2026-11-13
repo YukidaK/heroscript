@@ -53,12 +53,12 @@ const analyze = async () => {
 await settle();
 response = [{ severity: 'warning', line: 2, column: 1, message: 'Ignored' }];
 await analyze();
-assert.match(markers.get(1).style.cssText, /b88600/);
+assert.match(markers.get(1).style.cssText, /f0b429/);
 assert.match(markers.get(1).attributes['aria-label'], /Aviso/);
 assert.match(markers.get(1).innerHTML, /<svg/);
 response = [{ severity: 'error', line: 1, column: 2, message: 'Invalid' }];
 editor.setValue('bad'); await analyze();
-assert.match(markers.get(0).style.cssText, /e53935/);
+assert.match(markers.get(0).style.cssText, /ff6b5e/);
 assert.match(wrapper.panel.children[0].textContent, /Erro/);
 let resolveOld;
 response = new Promise(resolve => { resolveOld = resolve; });

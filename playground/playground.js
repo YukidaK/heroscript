@@ -1,4 +1,5 @@
-// Playground da HeroScript: o mesmo compilador da linha de comando, rodando numa JVM em WebAssembly (CheerpJ).
+// Playground da HeroScript: o mesmo compilador da linha de comando. Roda no servidor (/api/, cerca de 1 s por
+// execução) e, se o servidor não responder, numa JVM em WebAssembly no próprio navegador (CheerpJ).
 (() => {
   "use strict";
 
@@ -23,7 +24,7 @@
 
   const editor = CodeMirror.fromTextArea($("code"), {
     mode: "text/x-heroscript",
-    theme: matchMedia("(prefers-color-scheme: dark)").matches ? "material-darker" : "default",
+    theme: "heronoir", // definido em playground.css
     lineNumbers: true,
     gutters: ["CodeMirror-linenumbers", "spiderSense"],
     indentUnit: 4,
@@ -36,7 +37,12 @@
     },
   });
 
-  let playground = null;
+  const API = "/api/";
+  const RETRY_SERVER_MS = 60000;
+  let server = false;    // o servidor respondeu e é usado primeiro
+  let playground = null; // ponte Java do CheerpJ; só é criada se o servidor falhar
+  let jvm = null;        // promessa da inicialização do CheerpJ
+  let ready = false;     // há pelo menos um lugar para executar
   let examples = {};
   let busy = false;
   let timer = null;
@@ -44,6 +50,7 @@
   let revision = 0;
   let analysis = null; // promessa da análise em curso; a JVM atende uma chamada por vez
   const diagnosticPanel = document.createElement("div");
+  diagnosticPanel.className = "diagnostics";
   diagnosticPanel.setAttribute("aria-live", "polite");
   diagnosticPanel.style.cssText = "padding:8px;max-height:160px;overflow:auto;font-size:13px";
   editor.getWrapperElement().after(diagnosticPanel);
@@ -63,7 +70,7 @@
   // A análise roda em segundo plano: não desabilita os botões nem mexe na barra de status. Se o usuário
   // executar durante a análise, action() espera ela terminar em vez de ignorar o clique.
   async function analyzeEditor() {
-    if (!playground || busy || analysis) { scheduleDiagnostics(); return; }
+    if (!ready || busy || analysis) { scheduleDiagnostics(); return; }
     const version = revision;
     analysis = runAnalysis(version, editor.getValue());
     try {
@@ -77,14 +84,14 @@
   async function runAnalysis(version, source) {
     diagnosticPanel.textContent = "spiderSense: analisando…";
     try {
-      const issues = JSON.parse(String(await playground.diagnostics(source)));
+      const issues = JSON.parse(await call("diagnostics", source));
       if (version !== revision) return;
       editor.clearGutter("spiderSense");
       diagnosticPanel.replaceChildren();
       const byLine = new Map();
       for (const issue of issues) {
         const label = issue.severity === "error" ? "Erro" : "Aviso";
-        const color = issue.severity === "error" ? "#e53935" : "#b88600";
+        const color = issue.severity === "error" ? "#ff6b5e" : "#f0b429";
         const description = `${label} — linha ${issue.line}: ${issue.message}`;
         const row = document.createElement("button");
         row.type = "button";
@@ -97,7 +104,7 @@
       }
       for (const [line, entries] of byLine) {
         const marker = document.createElement("span");
-        marker.style.cssText = `color:${entries.some(e => e.issue.severity === "error") ? "#e53935" : "#b88600"};display:block;width:18px;cursor:help`;
+        marker.style.cssText = `color:${entries.some(e => e.issue.severity === "error") ? "#ff6b5e" : "#f0b429"};display:block;width:18px;cursor:help`;
         marker.title = entries.map(e => e.description).join("\n");
         marker.setAttribute("role", "img");
         marker.setAttribute("aria-label", marker.title);
@@ -121,7 +128,7 @@
   /** Liga/desliga os botões; enquanto ocupado, mostra um cronômetro para nunca parecer travado. */
   function setBusy(value, message) {
     busy = value;
-    buttons.forEach((b) => (b.disabled = value || !playground));
+    buttons.forEach((b) => (b.disabled = value || !ready));
     clearInterval(timer);
     if (!message) return;
     status.textContent = message;
@@ -158,15 +165,15 @@
   }
 
   async function action(kind) {
-    if (busy || !playground) return;
+    if (busy || !ready) return;
     const titles = { run: "Saída", java: "Java gerado", tokens: "Tokens" };
     setBusy(true, kind === "run" ? "Compilando e executando…" : "Processando…");
     $("output-title").textContent = titles[kind];
     try {
       if (analysis) await analysis;
       const started = performance.now();
-      const result = await playground[kind](editor.getValue());
-      render(String(result), kind === "run");
+      const result = await call(kind, editor.getValue());
+      render(result, kind === "run");
       $("timing").textContent = `${Math.round(performance.now() - started)} ms`;
       setBusy(false, "Pronto. Ctrl+Enter executa.");
     } catch (e) {
@@ -216,6 +223,61 @@
     }
   }
 
+  function describe() {
+    $("hint").textContent = server
+      ? "O programa é compilado e executado no servidor, isolado e com limite de 10 s."
+      : "O compilador HeroScript e o compilador Java (ECJ) rodam no seu navegador via WebAssembly.";
+  }
+
+  async function probeServer() {
+    try {
+      return (await fetch(`${API}health`, { cache: "no-store" })).ok === true;
+    } catch {
+      return false;
+    }
+  }
+
+  async function remote(kind, source) {
+    const response = await fetch(API + kind, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain; charset=utf-8" },
+      body: source,
+    });
+    if (!response.ok) throw new Error(`servidor respondeu ${response.status}`);
+    return await response.text();
+  }
+
+  /** Executa uma operação no servidor; se ele falhar, no CheerpJ (iniciado só nesse momento). */
+  async function call(kind, source) {
+    if (server) {
+      try {
+        return await remote(kind, source);
+      } catch (e) {
+        console.warn(`[heroscript] ${e.message || e}; usando o navegador`);
+        server = false;
+        describe();
+        setTimeout(async () => { server = await probeServer(); describe(); }, RETRY_SERVER_MS);
+      }
+    }
+    await ensureJvm();
+    return String(await playground[kind](source));
+  }
+
+  /** Inicia o CheerpJ uma única vez. A primeira compilação é lenta, por isso já compila um programa mínimo. */
+  function ensureJvm() {
+    if (!jvm) {
+      jvm = (async () => {
+        const waiting = "Preparando o compilador Java no navegador (só na primeira vez, cerca de 40 s)…";
+        if (busy) setBusy(true, waiting); else status.textContent = waiting;
+        await startJvm();
+        await playground.run(WARMUP);
+        if (!busy) status.textContent = "Pronto. Ctrl+Enter executa.";
+      })();
+      jvm.catch(() => { jvm = null; });
+    }
+    return jvm;
+  }
+
   async function startJvm() {
     const base = new URL(".", location.href).pathname;
     await cheerpjInit({
@@ -243,18 +305,27 @@
   $("share").addEventListener("click", share);
 
   (async () => {
-    setBusy(true, "Carregando a JVM (CheerpJ)…");
+    setBusy(true, "Carregando…");
     try {
       await loadExamples();
     } catch (e) {
       render(`Não foi possível carregar os exemplos: ${e}`, true);
     }
+    server = await probeServer();
+    describe();
+    if (server) {
+      ready = true;
+      setBusy(false, "Pronto. Ctrl+Enter executa.");
+      render("Clique em ▶ Executar (ou Ctrl+Enter).", false);
+      scheduleDiagnostics();
+      return;
+    }
     try {
       const started = performance.now();
-      await startJvm();
+      setBusy(true, "Carregando a JVM (CheerpJ)…");
       render("Preparando o compilador Java no navegador. Isso só acontece ao abrir a página.", false);
-      setBusy(true, "Preparando o compilador Java (só na primeira vez, cerca de 40 s)…");
-      await playground.run(WARMUP);
+      await ensureJvm();
+      ready = true;
       setBusy(false, `Pronto em ${((performance.now() - started) / 1000).toFixed(0)} s. Ctrl+Enter executa.`);
       render("Clique em ▶ Executar (ou Ctrl+Enter).", false);
       scheduleDiagnostics();

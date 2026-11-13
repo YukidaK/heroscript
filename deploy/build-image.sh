@@ -78,7 +78,9 @@ echo "enviando contexto de build"
 # Só o que a imagem usa: o contexto é a raiz do repo, que também tem src/,
 # build/, .venv... e nada disso precisa subir pro host. O site/ já vem pronto
 # (gerado por scripts/build_site.sh antes do terraform).
-tar -cf - -C "$CONTEXT_DIR" deploy/Dockerfile deploy/nginx.conf site \
+# CONTEXT_PATHS troca essa lista (a imagem do runner envia deploy/Dockerfile.runner e src/).
+# shellcheck disable=SC2086  # lista separada por espaços, de propósito
+tar -cf - -C "$CONTEXT_DIR" ${CONTEXT_PATHS:-deploy/Dockerfile deploy/nginx.conf site} \
   | curl -sS --fail-with-body -m 300 -X PUT -H "$auth" \
       -H 'Content-Type: application/x-tar' --data-binary @- \
       "$docker_api/containers/$cid/archive?path=/tmp" >/dev/null

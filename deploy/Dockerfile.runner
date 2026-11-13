@@ -1,0 +1,20 @@
+# Runner do playground: compila o compilador/runtime da HeroScript e sobe heroscript.server.RunnerServer.
+# Precisa de um JDK completo em execução (o javac compila o Java gerado de cada programa).
+# O contexto e a raiz do repo (ver build-image.sh): so deploy/Dockerfile.runner e src/ sao enviados.
+#
+# O isolamento NAO esta aqui: fica no docker-compose.yml (sem rede externa, disco somente leitura,
+# sem capabilities, limites de memoria/CPU/processos). Nao rode esta imagem com `-p` numa rede aberta.
+FROM eclipse-temurin:21-jdk
+
+WORKDIR /app
+COPY src/ /app/src/
+RUN mkdir classes \
+ && javac --release 17 -encoding UTF-8 -d classes $(find src -name '*.java') \
+ && rm -rf src
+
+ENV RUNNER_BIND=0.0.0.0 \
+    RUNNER_PORT=8080
+
+USER 65534:65534
+EXPOSE 8080
+CMD ["java", "-Xmx96m", "-XX:+UseSerialGC", "-XX:-UsePerfData", "-cp", "/app/classes", "heroscript.server.RunnerServer"]

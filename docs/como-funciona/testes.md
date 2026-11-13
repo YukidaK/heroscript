@@ -33,11 +33,14 @@ No Windows, `tests/run_tests.ps1` faz o mesmo.
 | `SpiderSenseTests` | erros e avisos em JSON, sem executar o programa |
 | `ValidationTests` | recursos combinados e paridade entre `check` e spiderSense |
 | `RevisionFixTests` | vilões na batcave, `FriendlyFire` em combos, literais numéricos, strings incompletas |
+| `RunnerServerTests` | o servidor do playground: mesma saída da linha de comando, limite de tempo, de saída e de memória, respostas 413/404/405/503 |
 | `spiderSense-editor.mjs` | marcadores do editor, descarte de análises antigas, Executar durante a análise |
+| `playground-server.mjs` | playground usando o servidor sem iniciar o CheerpJ, e caindo para o CheerpJ quando o servidor falha |
 
 !!! warning "O que esses testes não cobrem"
-    Tudo acima roda na JVM local, com o `javac`. O playground usa outro compilador (ECJ) e outra JVM (CheerpJ);
-    para testar esse caminho veja [Playground](playground.md#testando-o-caminho-do-navegador).
+    Tudo acima roda na JVM local, com o `javac`. O modo navegador do playground usa outro compilador (ECJ) e outra
+    JVM (CheerpJ); para testar esse caminho veja [Playground](playground.md#testando-o-caminho-do-navegador). O
+    isolamento do runner (rede, disco, limites do container) só é verificável com a stack em Docker.
 
 !!! success "Documentação sempre correta"
     As páginas de [exemplos](../exemplos/index.md) incluem o código de `examples/` e a saída de `tests/expected/`

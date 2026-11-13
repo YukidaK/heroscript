@@ -22,6 +22,8 @@ echo "$ECJ_SHA256  $ECJ_JAR" | sha256sum --check --quiet
 rm -rf "$OUT"
 mkdir -p "$OUT"
 cp "$ROOT"/playground/* "$OUT"/
+# Tokens visuais e logo são os mesmos da documentação.
+cp "$ROOT/docs/assets/comic-tokens.css" "$ROOT/docs/assets/logo.svg" "$OUT"/
 jar --create --file "$OUT/heroscript.jar" -C "$ROOT/build/classes" .
 cp "$ECJ_JAR" "$OUT/ecj.jar"
 

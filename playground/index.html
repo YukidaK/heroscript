@@ -4,17 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>HeroScript Playground</title>
-  <meta name="description" content="Escreva e execute HeroScript no navegador: o compilador real roda numa JVM em WebAssembly (CheerpJ).">
+  <meta name="description" content="Escreva e execute HeroScript no navegador, com o mesmo compilador da linha de comando.">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/material-darker.min.css">
+  <link rel="icon" href="logo.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="comic-tokens.css">
   <link rel="stylesheet" href="playground.css">
 </head>
 <body>
   <header class="bar">
-    <div class="brand">
-      <span class="logo" aria-hidden="true">⚡</span>
+    <a class="brand" href="../" title="Documentação da HeroScript">
+      <img class="logo" src="logo.svg" alt="">
       <h1>HeroScript <span>Playground</span></h1>
-    </div>
+    </a>
     <div class="controls">
       <label class="sr-only" for="example">Exemplo</label>
       <select id="example" title="Carregar exemplo"></select>
@@ -28,7 +29,7 @@
 
   <main class="panes">
     <section class="pane editor-pane">
-      <div class="pane-title">programa.hero</div>
+      <div class="pane-title"><span>programa.hero</span></div>
       <textarea id="code" spellcheck="false"></textarea>
     </section>
     <section class="pane output-pane">
@@ -39,7 +40,7 @@
 
   <footer class="status">
     <span id="status">Carregando…</span>
-    <span class="hint">O compilador HeroScript e o compilador Java (ECJ) rodam no seu navegador via WebAssembly.</span>
+    <span class="hint" id="hint"></span>
   </footer>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>

@@ -1,34 +1,5 @@
-:root {
-  --bg: #f6f7fb;
-  --panel: #ffffff;
-  --border: #d9dce6;
-  --text: #1d2130;
-  --muted: #646a80;
-  --accent: #d6336c;
-  --accent-text: #ffffff;
-  --out-bg: #ffffff;
-  --err: #c92a2a;
-  --tag: #5f3dc4;
-  --say: #087f5b;
-  --hit: #e8590c;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #12141c;
-    --panel: #1a1d28;
-    --border: #2c3142;
-    --text: #e4e6ef;
-    --muted: #9399b0;
-    --accent: #f06595;
-    --accent-text: #12141c;
-    --out-bg: #161922;
-    --err: #ff8787;
-    --tag: #b197fc;
-    --say: #63e6be;
-    --hit: #ffa94d;
-  }
-}
+/* Playground no mesmo visual da documentação: quadrinho noir, preto e branco com destaque laranja.
+   Os tokens (--hs-*) vêm de comic-tokens.css, copiado de docs/assets/ por scripts/build_playground.sh. */
 
 * { box-sizing: border-box; }
 
@@ -37,115 +8,223 @@ html, body { height: 100%; margin: 0; }
 body {
   display: flex;
   flex-direction: column;
-  background: var(--bg);
-  color: var(--text);
-  font: 14px/1.4 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background:
+    linear-gradient(90deg, transparent 50%, rgba(242, 239, 230, .035) 50% calc(50% + 1px), transparent calc(50% + 1px)),
+    var(--hs-ink);
+  color: var(--hs-text);
+  font: 14px/1.4 var(--hs-font-text);
 }
 
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 
+/* ------------------------------------------------------------------ faixa de título */
 .bar {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 16px;
+  gap: 10px 16px;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 16px;
-  background: var(--panel);
-  border-bottom: 1px solid var(--border);
+  padding: 10px 18px;
+  background: #000;
+  border-bottom: var(--hs-stroke) solid var(--hs-paper);
 }
 
-.brand { display: flex; align-items: center; gap: 8px; }
-.logo { font-size: 22px; }
-h1 { margin: 0; font-size: 18px; font-weight: 700; }
-h1 span { color: var(--accent); font-weight: 500; }
+.brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+.logo { width: 30px; height: 30px; display: block; }
+h1 {
+  margin: 0;
+  font: 800 24px/1 var(--hs-font-display);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--hs-paper);
+}
+h1 span { color: var(--hs-orange); }
 
 .controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 
 select, button, .docs {
-  height: 32px;
-  padding: 0 12px;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--bg);
-  color: var(--text);
-  font: inherit;
+  height: 36px;
+  padding: 1px 14px 0;
+  border: 2px solid var(--hs-paper);
+  border-radius: 0;
+  background: transparent;
+  color: var(--hs-paper);
+  font: 700 13px/1 var(--hs-font-display);
+  letter-spacing: .14em;
+  text-transform: uppercase;
   cursor: pointer;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
+  transition: transform .12s, box-shadow .12s, background .12s, color .12s;
 }
+select {
+  max-width: 300px;
+  background: var(--hs-panel);
+  border-color: var(--hs-line);
+  font: 500 13px/1 var(--hs-font-text);
+  letter-spacing: 0;
+  text-transform: none;
+}
+select option { background: var(--hs-panel); color: var(--hs-text); }
+button:disabled { opacity: .45; cursor: wait; }
+button.primary { background: var(--hs-orange); border-color: var(--hs-orange); color: #000; font-weight: 800; }
+button:not(:disabled):hover, .docs:hover, button:not(:disabled):focus-visible, .docs:focus-visible {
+  background: var(--hs-paper);
+  border-color: var(--hs-paper);
+  color: #000;
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0 var(--hs-orange);
+  outline: none;
+}
+select:hover, select:focus-visible { border-color: var(--hs-paper); outline: none; }
 
-select { max-width: 260px; }
-button:disabled { opacity: .5; cursor: wait; }
-button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); font-weight: 600; }
-button:not(:disabled):hover, .docs:hover, select:hover { border-color: var(--accent); }
-
+/* ------------------------------------------------------------------ painéis */
 .panes {
   flex: 1;
   min-height: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  padding: 12px 16px;
+  gap: 22px;
+  padding: 26px 22px 20px 18px;
 }
 
 .pane {
+  position: relative;
   display: flex;
   flex-direction: column;
   min-height: 0;
   min-width: 0;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
+  background: var(--hs-panel);
+  border: var(--hs-stroke) solid var(--hs-paper);
+  box-shadow: var(--hs-shadow);
 }
+.output-pane { border-color: var(--hs-paper); background: var(--hs-halftone), #101010; }
 
+/* rótulo do painel: caixa de legenda presa no canto */
 .pane-title {
+  position: absolute;
+  z-index: 5;
+  top: -16px;
+  left: 14px;
+  right: 14px;
   display: flex;
   justify-content: space-between;
-  padding: 6px 12px;
-  border-bottom: 1px solid var(--border);
-  color: var(--muted);
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: .04em;
+  align-items: center;
+  pointer-events: none;
 }
+.pane-title > :first-child {
+  padding: 3px 12px 1px;
+  background: var(--hs-paper);
+  color: #000;
+  border: 2px solid #000;
+  box-shadow: 3px 3px 0 #000;
+  font: 400 15px/1.25 var(--hs-font-comic);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  transform: rotate(-1.5deg);
+}
+.output-pane .pane-title > :first-child { background: var(--hs-orange); }
+#timing {
+  padding: 2px 8px 1px;
+  background: #000;
+  color: var(--hs-muted);
+  font: 500 11px/1.4 var(--hs-font-code);
+}
+#timing:empty { display: none; }
 
-.editor-pane .CodeMirror { flex: 1; height: auto; font: 13px/1.5 ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace; }
+/* ------------------------------------------------------------------ editor (tema CodeMirror "heronoir") */
+.editor-pane .CodeMirror {
+  flex: 1;
+  height: auto;
+  padding-top: 14px;
+  font: 13px/1.6 var(--hs-font-code);
+}
+.cm-s-heronoir.CodeMirror { background: var(--hs-panel); color: #dedbd2; }
+.cm-s-heronoir .CodeMirror-gutters { background: #101010; border-right: 1px solid var(--hs-line); }
+.cm-s-heronoir .CodeMirror-linenumber { color: #6d6a64; }
+.cm-s-heronoir .CodeMirror-cursor { border-left: 2px solid var(--hs-orange); }
+.cm-s-heronoir .CodeMirror-selected, .cm-s-heronoir.CodeMirror-focused .CodeMirror-selected { background: rgba(255, 106, 19, .28); }
+.cm-s-heronoir .CodeMirror-activeline-background { background: rgba(242, 239, 230, .04); }
+.cm-s-heronoir .CodeMirror-matchingbracket { color: #fff !important; outline: 1px solid var(--hs-orange); }
+.cm-s-heronoir .cm-keyword { color: var(--hs-orange); font-weight: 700; }
+.cm-s-heronoir .cm-type, .cm-s-heronoir .cm-variable-3 { color: #ffb37e; }
+.cm-s-heronoir .cm-builtin { color: #fff; font-weight: 500; }
+.cm-s-heronoir .cm-def, .cm-s-heronoir .cm-variable, .cm-s-heronoir .cm-variable-2, .cm-s-heronoir .cm-property { color: #dedbd2; }
+.cm-s-heronoir .cm-string { color: #f3d9a4; }
+.cm-s-heronoir .cm-number, .cm-s-heronoir .cm-atom { color: #ffb37e; }
+.cm-s-heronoir .cm-comment { color: #7b7871; font-style: italic; }
+.cm-s-heronoir .cm-operator, .cm-s-heronoir .cm-punctuation, .cm-s-heronoir .cm-bracket { color: #a29f97; }
+.cm-s-heronoir .cm-meta { color: #a29f97; }
 .spiderSense { width: 20px; }
 
+/* painel do spiderSense, logo abaixo do editor */
+.diagnostics {
+  border-top: 2px solid var(--hs-line);
+  background: #101010;
+  color: var(--hs-muted);
+  font: 500 12.5px/1.5 var(--hs-font-text);
+}
+.diagnostics button {
+  height: auto;
+  padding: 2px 0;
+  border: 0;
+  font: 500 12.5px/1.5 var(--hs-font-text);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.diagnostics button:hover, .diagnostics button:focus-visible {
+  background: transparent; transform: none; box-shadow: none; text-decoration: underline;
+}
+
+/* ------------------------------------------------------------------ saída */
 #output {
   flex: 1;
   margin: 0;
-  padding: 12px;
+  padding: 26px 16px 14px;
   overflow: auto;
-  background: var(--out-bg);
-  font: 13px/1.5 ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
+  background: transparent;
+  color: #dedbd2;
+  font: 13px/1.65 var(--hs-font-code);
   white-space: pre-wrap;
   word-break: break-word;
 }
 
-#output .err { color: var(--err); font-weight: 600; }
-#output .say { color: var(--say); }
-#output .tag { color: var(--tag); }
-#output .hit { color: var(--hit); }
-#output .exit { color: var(--muted); }
+#output .say { color: #fff; font-weight: 700; }
+#output .tag { color: var(--hs-muted); }
+#output .hit { color: var(--hs-orange-soft); font-weight: 500; }
+#output .err { color: var(--hs-red); font-weight: 700; }
+#output .exit { color: #6d6a64; }
 
+/* ------------------------------------------------------------------ rodapé */
 .status {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  align-items: center;
   gap: 4px 16px;
-  padding: 6px 16px;
-  border-top: 1px solid var(--border);
-  background: var(--panel);
-  color: var(--muted);
-  font-size: 12px;
+  padding: 7px 18px;
+  border-top: 1px solid var(--hs-line);
+  background: #000;
+  color: var(--hs-muted);
+  font-size: 12.5px;
+}
+#status {
+  font: 400 14px/1.3 var(--hs-font-comic);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--hs-orange-soft);
 }
 
 @media (max-width: 800px) {
-  .panes { grid-template-columns: 1fr; grid-auto-rows: minmax(300px, 1fr); }
+  .panes { grid-template-columns: 1fr; grid-auto-rows: minmax(320px, 1fr); gap: 30px; padding: 26px 16px 20px 12px; }
   body { height: auto; min-height: 100%; }
-  select { max-width: 100%; }
+  select { max-width: 100%; flex: 1 1 100%; }
+  h1 { font-size: 20px; }
+  .controls { flex: 1 1 100%; min-width: 0; max-width: 100%; }
+  select { min-width: 0; width: 100%; }
+  .controls button, .controls .docs { flex: 1 1 auto; text-align: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  select, button, .docs { transition: none; }
 }
